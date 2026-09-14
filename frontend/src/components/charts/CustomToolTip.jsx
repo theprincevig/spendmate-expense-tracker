@@ -8,13 +8,16 @@ export default function CustomToolTip({ active, payload, currency }) {
     const { rates, isFetchingRates } = useExchangeRateStore();
 
     return (
-        <div className="bg-white shadow-md rounded-lg p-2 border border-gray-300">
-            <p className="text-xs font-semibold text-green-800 mb-1">{name}</p>
-            <p className="text-sm text-gray-600">
+        <div className="
+            glass
+            min-w-[180px] rounded-xl p-3
+        ">
+            <p className="text-xs font-semibold text-(--text-primary) mb-1.5">{name}</p>
+            <p className="text-xs text-(--text-secondary)">
                 Amount:{" "}
-                <span className="text-sm font-medium text-gray-900">
+                <span className="text-sm font-semibold text-(--text-primary)">
                     {isFetchingRates && currency !== "INR" ? (
-                        <span className=" w-40 h-3 shimmer inline-block" />
+                        <span className="w-24 h-3 shimmer inline-block rounded-full" />
                     ) : (
                         <>
                             {formatPrice({

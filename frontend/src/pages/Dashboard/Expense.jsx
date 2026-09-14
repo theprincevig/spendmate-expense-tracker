@@ -51,11 +51,15 @@ export default function Expense() {
     async function handleAddExpense(e) {
         e.preventDefault();
 
-        const newErrors = validateExpense({ ...expenseData, icon: expenseData.icon});
+        const newErrors = validateExpense({
+            ...expenseFormData,
+            icon: expenseFormData.icon
+        });
         if (hasErrors(newErrors)) return setErrors(newErrors);
 
         try {
             await addExpense(expenseFormData);
+            setErrors(data);
             setExpenseFormData(data);
             setOpenAddExpenseModal(false);
             toast.success("Expense added successfully!");
@@ -92,7 +96,7 @@ export default function Expense() {
 
     return (
         <DashboardLayout activeMenu="Expense">
-            <div className="my-5 mx-auto">
+            <div className="w-full max-w-[1500px] mx-auto py-2 md:py-4">
                 {loading ? (
                     <ExpenseNIncomeSkeleton />
                 ) : (

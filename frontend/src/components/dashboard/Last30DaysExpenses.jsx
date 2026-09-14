@@ -16,9 +16,11 @@ export default function Last30DaysExpenses({ data, currency }) {
     if (!currency) return null;
 
     return (
-        <div className="card col-span-1">
+        <div className="glass card col-span-1 hover:translate-x-1">
             <div className="flex items-center justify-between">
-                <h5 className="text-lg font-medium">Last 30 Days Expenses</h5>
+                <h5 className="text-lg font-semibold text-(--text-primary)">
+                    Last 30 Days Expenses
+                </h5>
             </div>
 
             <CustomBarChart 

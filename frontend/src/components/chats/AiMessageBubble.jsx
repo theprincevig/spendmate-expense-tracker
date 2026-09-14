@@ -3,23 +3,40 @@ export default function AiMessageBubble({ message, isLoading = false }) {
     const isAI = message.role === "ai";
 
     return (
-        <div 
+        <div
             className={`
-                flex ${isUser ? "justify-end" : "justify-start"}
+                flex
+                ${isUser ? "justify-end" : "justify-start"}
             `}
         >
             <div
                 className={`
-                    max-w-[75%] px-4 py-2 rounded-xl text-xs sm:text-sm font-[Basic] font-medium shadow-md
+                    max-w-[75%] px-4 py-2.5 rounded-2xl
+                    text-xs sm:text-sm
+                    font-[Basic] font-medium
+                    leading-relaxed wrap-break-word
+                    transition-all duration-200
+
                     ${
-                        isUser 
-                        ? "bg-emerald-600 text-white rounded-br-none" 
-                        : "bg-gray-100 text-gray-800 rounded-bl-none"
+                        isUser
+                            ? `
+                                text-white bg-linear-to-br
+                                from-brand-teal to-[#008F83]
+                                rounded-br-md
+                                shadow-[0_6px_18px_rgba(0,143,131,0.16)]
+                            `
+                            : `
+                                text-(--text-primary) bg-white/70
+                                border border-white/80
+                                backdrop-blur-xl rounded-bl-md
+                                shadow-[0_5px_18px_rgba(15,23,42,0.06)]
+                            `
                     }
+
                     ${
                         isAI && isLoading
-                        ? "animate-bounce shimmer"
-                        : ""
+                            ? "animate-pulse shimmer"
+                            : ""
                     }
                 `}
             >

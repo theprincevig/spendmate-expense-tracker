@@ -21,9 +21,17 @@ export default function CustomBarChart({
     const { rates, isFetchingRates } = useExchangeRateStore();
 
     // Function to alternate colors
-    function getBarColor(index) {
-        return index % 2 === 0 ? "#74C476" : "#238845";
-    }
+    const getBarColor = (index) => {
+        if (labelKey === "source") {
+            return index % 2 === 0 
+                ? "var(--brand-teal)" 
+                : "var(--brand-lime)";
+        }
+
+        return index % 2 === 0
+            ? "var(--brand-red)"
+            : "var(--brand-coral)";
+    };
 
     function CustomTooltip({ active, payload }) {
         if (!active || !payload || !payload.length) return null;
@@ -35,13 +43,18 @@ export default function CustomBarChart({
         const label = payload[0].payload[labelKey];
 
         return (
-            <div className="bg-white shadow-md rounded-lg p-2 border border-gray-300">
-                <p className="text-xs font-semibold text-green-800 mb-1">{label}</p>
-                <p className="text-sm text-gray-600">
+            <div className="
+                glass-subtle
+                min-w-[180px] rounded-xl p-3
+            ">
+                <p className="text-xs font-semibold text-(--text-primary) mb-1.5">
+                    {label}
+                </p>
+                <p className="text-xs text-(--text-secondary)">
                     Amount:{" "}
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-semibold text-(--text-primary)">
                         {isFetchingRates && currency !== "INR" ? (
-                            <span className=" w-40 h-3 shimmer inline-block" />
+                            <span className="w-24 h-3 shimmer inline-block rounded-full" />
                         ) : (
                             <>
                                 {formatPrice({
@@ -58,15 +71,31 @@ export default function CustomBarChart({
     }
 
     return (
-        <div className="bg-white mt-6">
+        <div className="mt-6">
             <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={data}>
+                <BarChart 
+                    data={data}
+                    margin={{ top: 10, right: 10, left: 12, bottom: 0 }}
+                >
                     <CartesianGrid stroke='none' />
 
-                    <XAxis dataKey={labelKey} tick={{ fontSize: 12, fill: "#555" }} stroke='none' />
+                    <XAxis 
+                        dataKey={labelKey}
+                        tick={{
+                            fontSize: 12,
+                            fill: "var(--text-secondary)"
+                        }}
+                        stroke='none'
+                        tickLine={false}
+                    />
                     <YAxis 
-                        tick={{ fontSize: 12, fill: "#555" }} 
-                        stroke='none' 
+                        tick={{
+                            fontSize: 12,
+                            fill: "var(--text-secondary)"
+                        }} 
+                        stroke='none'
+                        tickLine={false}
+                        axisLine={false}
                         tickFormatter={
                             (value) => formatPrice({
                                 amount: value,
@@ -76,18 +105,27 @@ export default function CustomBarChart({
                         }
                     />
 
-                    <Tooltip content={CustomTooltip} />
+                    <Tooltip 
+                        content={<CustomTooltip />}
+                        cursor={{
+                            fill:
+                                labelKey === "source"
+                                    ? "color-mix(in srgb, var(--brand-teal) 5%, transparent)"
+                                    : "color-mix(in srgb, var(--brand-red) 5%, transparent)"
+                        }}
+                    />
 
                     <Bar 
                         dataKey="amount"
-                        fill='#FF8042'
-                        radius={[10, 10, 0, 0]}
-                        activeDot={{ r: 8, fill: "yellow" }}
-                        activeStyle={{ fill: "#15803D" }}
+                        radius={[8, 8, 2, 2]}
+                        maxBarSize={42}
                     >
                         {Array.isArray(data) &&
                             data?.map((_, index) => (
-                                <Cell key={index} fill={getBarColor(index)} />
+                                <Cell 
+                                    key={index}
+                                    fill={getBarColor(index)} 
+                                />
                             ))
                         }
                     </Bar>

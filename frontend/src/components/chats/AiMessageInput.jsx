@@ -45,36 +45,60 @@ export default function AiMessageInput({
     }
 
     return (
-        <div className="w-full flex flex-col gap-2 p-4 border-t border-gray-200/70">
+        <div
+            className="
+                w-full p-4 sm:p-5
+                flex flex-col gap-3
+                glass-subtle
+            "
+        >
             <AiQuickActions />
 
-            <div className="w-full flex items-center justify-center gap-2">
-                <input 
+            <div className="w-full flex items-center gap-2">
+                <input
                     type="text"
-                    placeholder={disabled ? "AI is thinking...." : "Ask about your spending...."}
+                    placeholder={
+                        disabled
+                            ? "AI is thinking..."
+                            : "Ask about your spending..."
+                    }
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    className="AI_chat-input"
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            onSend();
+                        }
+                    }}
+                    className="glass AI_chat-input"
                     disabled={disabled}
                 />
+
                 {input ? (
                     <button
+                        type="button"
                         onClick={onSend}
                         className="AI_send-btn"
                         disabled={disabled}
+                        aria-label="Send message"
                     >
                         <Send size={18} />
                     </button>
                 ) : (
                     <button
+                        type="button"
                         onClick={handleReset}
-                        className="AI_send-btn"
+                        className="glass AI_reset-btn"
                         disabled={disabled}
                         title="New Chat"
+                        aria-label="Start new chat"
                     >
-                        <RefreshCcwIcon 
-                            size={18} 
-                            className={spinReset ? "AI_glow-spin" : ""}
+                        <RefreshCcwIcon
+                            size={18}
+                            className={
+                                spinReset
+                                    ? "AI_glow-spin"
+                                    : ""
+                            }
                         />
                     </button>
                 )}

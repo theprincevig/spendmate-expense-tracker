@@ -1,4 +1,5 @@
 import { useExchangeRateStore } from "../../store/useExchangeRateStore";
+import { getCardTheme } from "../../theme/theme";
 import { formatPrice } from "../../utils/formatPrice";
 
 export default function InfoCard({
@@ -9,24 +10,42 @@ export default function InfoCard({
     color
 }) {
     const { rates, isFetchingRates } = useExchangeRateStore();
+    const cardTheme = getCardTheme(color);
 
     return (
-        <div className="flex gap-6 bg-white p-6 rounded-2xl shadow-md shadow-gray-100 border border-gray-200/50">
-            <div 
+        <div
+            className="
+                glass card
+                flex items-center gap-4 md:gap-5
+                overflow-hidden
+                hover:-translate-y-1
+            "
+        >
+            {/* Subtle accent */}
+            <div
                 className={`
-                    w-14 h-14 flex items-center justify-center text-xl text-white 
-                    rounded-full drop-shadow-xl
+                    absolute left-0 top-0
+                    bottom-0 w-1 ${cardTheme.accent}
                 `}
-                style={{ background: color }}
+            />
+
+            {/* Icon */}
+            <div
+                className={`
+                    w-12 h-12 md:w-14 md:h-14
+                    shrink-0 flex items-center justify-center
+                    ${cardTheme.icon} ${cardTheme.iconColor}
+                    rounded-2xl shadow-lg shadow-black/5
+                `}
             >
                 {icon}
             </div>
 
-            <div>
-                <h6 className="text-sm text-gray-500 mb-1">{ label }</h6>
-                <p className="text-xl">
+            <div className="min-w-0">
+                <h6 className="text-sm text-(--text-secondary) mb-1">{ label }</h6>
+                <p className="text-xl md:text-2xl font-semibold text-(--text-primary) truncate">
                     {isFetchingRates && currency !== "INR" ? (
-                        <span className=" w-40 h-3 shimmer inline-block" />
+                        <span className="w-32 md:w-40 h-5 shimmer rounded-md inline-block" />
                     ) : (
                         <>
                             {formatPrice({

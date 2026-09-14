@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import CustomPieChart from "../charts/CustomPieChart";
-import { COLOR_ARRAY } from "../../theme/color";
+import { COLOR_ARRAY } from "../../theme/theme";
 
 export default function RecentIncomeWithChart({ currency, data, totalIncome }) {
     const [chartData, setChartData] = useState([]);
@@ -23,9 +23,9 @@ export default function RecentIncomeWithChart({ currency, data, totalIncome }) {
     if (!currency) return null;
 
     return (
-        <div className="card">
+        <div className="glass card hover:-translate-x-1">
             <div className="flex items-center justify-between">
-                <h5 className="text-lg font-medium">Last 60 Days Income</h5>
+                <h5 className="text-lg font-semibold text-(--text-primary)">Last 60 Days Income</h5>
             </div>
 
             <CustomPieChart 

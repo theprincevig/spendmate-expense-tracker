@@ -6,36 +6,42 @@ export default function RecentIncome({ currency, transactions, onSeeMore }) {
     if (!Array.isArray(transactions)) return null;
 
     return (
-        <div className="card">
-            <div className="flex items-center justify-between">
-                <h5 className="text-lg font-medium">Income</h5>
+        <div className="glass card hover:translate-x-1">
+            <div className="flex items-center justify-between gap-4">
+                <h5 className="text-lg font-semibold text-(--text-primary)">
+                    Income
+                </h5>
 
                 <button
+                    className="glass card-btn"
                     onClick={onSeeMore}
-                    className="card-btn"
                 >
                     See more <ArrowRight size={14} />
                 </button>
             </div>
 
-            <div className="mt-6">
-                {transactions.length === 0 ? (
-                    <p className="text-sm text-gray-400 text-center font-[Basic] font-medium">
-                        No income transactions found.
-                    </p>
-                ) : (
-                    transactions?.slice(0,5)?.map((income) => (
-                        <TransactionsInfoCard 
-                            key={income._id}
-                            type="income"
-                            title={income.source}
-                            amount={Number(income.amount)}
-                            icon={income.icon}
-                            currency={currency}
-                            date={moment(income.date).format("Do MMM YYYY")}
-                            hideDeleteBtn
-                        />
-                    ))
+            {/* Transactions */}
+            <div className="mt-5">
+                {transactions?.slice(0, 5)?.map((income) => (
+                    <TransactionsInfoCard 
+                        key={income._id}
+                        type="income"
+                        title={income.source}
+                        amount={Number(income.amount)}
+                        icon={income.icon}
+                        currency={currency}
+                        date={moment(income.date).format("Do MMM YYYY")}
+                        hideDeleteBtn
+                    />
+                ))}
+
+                {/* Empty State */}
+                {!transactions?.length && (
+                    <div className="py-8 text-center">
+                        <p className="text-sm text-(--text-secondary)">
+                            No income transactions found
+                        </p>
+                    </div>
                 )}
             </div>
         </div>

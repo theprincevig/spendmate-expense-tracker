@@ -20,18 +20,20 @@ export default function ExpenseOverview({
     if (!currency) return null;
 
     return (
-        <div className="card">
-            <div className="flex items-center justify-between">
-                <div className="flex flex-col justify-center">
-                    <h5 className="text-base sm:text-lg font-medium">Expense Overview</h5>
-                    <p className="text-xs font-[Basic] tracking-wide text-gray-400 mt-0.5">
+        <div className="glass card">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h5 className="text-base sm:text-lg font-semibold text-(--text-primary)">
+                        Expense Overview
+                    </h5>
+                    <p className="text-xs font-[Basic] tracking-wider text-(--text-secondary)">
                         Track your expenses over time and analyze your expense trends.
                     </p>
                 </div>
 
                 <button
                     onClick={onAddExpense}
-                    className="add-btn"
+                    className="expense-btn"
                 >
                     <Plus size={16} />
                     Add Expense
@@ -39,7 +41,10 @@ export default function ExpenseOverview({
             </div>
 
             <div className="mt-10">
-                <CustomLineChart data={chartData} currency={currency} />
+                <CustomLineChart 
+                    data={chartData}
+                    currency={currency}
+                />
             </div>
         </div>
     );

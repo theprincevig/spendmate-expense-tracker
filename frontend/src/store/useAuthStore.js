@@ -13,14 +13,14 @@ const normalizeUser = (user) => {
     };
 }
 
-export const useAuthStore = create((set, get) => ({
+export const useAuthStore = create((set) => ({
     authUser: null,
 
     isCheckingAuth: true,
     isSigningUp: false, // Signup loading state
+    isVerifing: false,
     isLoggingIn: false, // Login loading state
     isUpdatingProfile: false, // Profile update loading state
-    isResettingPassword: false, // Reset password loading state
 
     checkAuth: async () => {
         set({ isCheckingAuth: true });
@@ -44,11 +44,12 @@ export const useAuthStore = create((set, get) => ({
     signup: async (data) => {
         set({ isSigningUp: true });
         try {
-            const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, data);
-            const { user } = res.data;
+            const res = await axiosInstance.post(
+                API_PATHS.AUTH.REGISTER,
+                data
+            );
 
-            set({ authUser: normalizeUser(user) });
-            return user;
+            return res.data;
 
         } catch (error) {
             console.error(`Singup error: ${error}`);
@@ -56,6 +57,33 @@ export const useAuthStore = create((set, get) => ({
 
         } finally {
             set({ isSigningUp: false });
+        }
+    },
+
+    verifyEmail: async (email, otp) => {
+        set({ isVerifing: true });
+        try {
+            const res = await axiosInstance.post(
+                API_PATHS.AUTH.EMAIL_VERIFY,
+                { email, otp }
+            );
+
+            if (res.data?.success) {
+                set((state) => {
+                    const updatedUser = 
+                        { ...state.authUser, isVerified: true };
+                    
+                    return { authUser: normalizeUser(updatedUser) };
+                });
+            }
+            return res.data;
+
+        } catch (error) {
+            console.error(`Email verification error: ${error}`);
+            throw error.response?.data || error;
+
+        } finally {
+            set({ isVerifing: false });
         }
     },
 
@@ -116,6 +144,9 @@ export const useAuthStore = create((set, get) => ({
                 JSON.stringify({
                     fullName: data.fullName,
                     dob: data.dob,
+                    gender: data.gender,
+                    phone: data.phone,
+                    country: data.country
                 })
             );
             if (data.profilePic) formData.append("picture", data.profilePic);
@@ -142,29 +173,6 @@ export const useAuthStore = create((set, get) => ({
 
         } finally {
             set({ isUpdatingProfile: false });
-        }
-    },
-
-    changePassword: async ({ oldPassword, newPassword }) => {
-        set({ isResettingPassword: true });
-        try {
-            const res = await axiosInstance.post(
-                API_PATHS.AUTH.CHANGE_PASSWORD,
-                { oldPassword, newPassword }
-            );
-
-            // Force logout
-            await axiosInstance.post(API_PATHS.AUTH.LOGOUT);
-            set({ authUser: null });
-
-            return res.data;
-
-        } catch (error) {
-            console.error(`Reset password error: ${error}`);
-            throw error.response?.data || error;
-
-        } finally {
-            set({ isResettingPassword: false });
         }
     },
 

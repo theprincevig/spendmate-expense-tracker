@@ -2,9 +2,15 @@ export const API_PATHS = {
     AUTH: {
         CHECK_AUTH: "/api/auth/session",
         REGISTER: "/api/auth/register",
+        EMAIL_VERIFY: "/api/auth/verify-email",
         LOGIN: "/api/auth/login",
-        LOGOUT: "/api/auth/logout",
-        CHANGE_PASSWORD: "/api/auth/change-password"
+        LOGOUT: "/api/auth/logout"
+    },
+    PASSWORD: {
+        CHANGE: "/api/password/change",
+        FORGOT: "/api/password/forgot",
+        FORGOT_OTP_VERIFY: "/api/password/forgot-otp/verify",
+        RESET: (token) => `/api/password/reset/${token}`
     },
     DASHBOARD: {
         GET_DATA: "/api/dashboard"

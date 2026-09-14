@@ -18,8 +18,11 @@ import Income from './pages/Dashboard/Income';
 import Expense from './pages/Dashboard/Expense';
 import ViewProfile from './pages/Profile/ViewProfile';
 import UpdateProfile from './pages/Profile/UpdateProfile';
-import ChangePassword from './pages/Auth/ChangePassword';
+import ChangePassword from './pages/Password/ChangePassword';
 import AiChatbox from './pages/Dashboard/AiChatbox';
+import VerifyEmail from './pages/Auth/VerifyEmail';
+import ForgotPassword from './pages/Password/ForgotPassword';
+import ResetPassword from './pages/Password/ResetPassword';
 
 
 function App() {
@@ -38,6 +41,7 @@ function App() {
             <Route path='/' element={<Root />} />
             <Route path='/login' element={<Login />} />
             <Route path='/signup' element={<Signup />} />
+            <Route path='/verify-email' element={<VerifyEmail />} />
 
             <Route path='/dashboard' element={
               <ProtectedRoute>
@@ -75,10 +79,18 @@ function App() {
                 </ProtectedRoute>
               }
             />
-            <Route path='/change-password' element={
+            <Route path='/password/change' element={
                 <ProtectedRoute>
                   <ChangePassword />
                 </ProtectedRoute>
+              }
+            />
+            <Route path='/password/forgot' element={
+                <ForgotPassword />
+              }
+            />
+            <Route path='/password/reset/:token' element={
+                <ResetPassword />
               }
             />
           </Routes>

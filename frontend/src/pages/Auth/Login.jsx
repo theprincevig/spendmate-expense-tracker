@@ -37,7 +37,7 @@ export default function Login() {
             await login(formData);
             setFormData(data);
             navigate("/dashboard");
-            toast.success("Welcome back to the spendmate!");
+            toast.success("Welcome back to SpendMate!");
 
         } catch (error) {
             console.error(error.error);
@@ -47,11 +47,15 @@ export default function Login() {
 
     return (
         <AuthLayout>
-            <div className="lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center">
-                <h3 className="text-2xl font-semibold text-black">Welcome Back</h3>
-                <p className="text-sm text-slate-700 mt-[5px] mb-6">
-                    Please enter your details to login
-                </p>
+            <div className="w-full lg:w-[70%] flex flex-col justify-center">
+                <div className='mb-7'>
+                    <h3 className="text-2xl md:text-3xl font-[Genos] font-semibold tracking-tight text-(--text-primary)">
+                        Welcome Back
+                    </h3>
+                    <p className="text-xs text-(--text-secondary)">
+                        Please enter your details to login
+                    </p>
+                </div>
 
                 <form onSubmit={handleSubmit}>
                     <Input 
@@ -74,19 +78,31 @@ export default function Login() {
                         error={errors.password}
                     />
 
+                    {/* Forgot password */}
+                    <div className="text-left text-xs px-2 mt-1">
+                        <Link 
+                            to={"/password/forgot"}
+                            className="text-xs font-medium text-income 
+                            hover:text-brand-teal hover:underline transition-all"
+                        >
+                            Forgotten password?
+                        </Link>
+                    </div>
+
                     <button 
                         type="submit"
-                        className="btn-success"
+                        className="auth-btn"
                         disabled={isLoggingIn}
                     >
-                        { isLoggingIn ? <Loader size={20} className="animate-spin mx-auto" /> : "LOGIN" }
+                        { isLoggingIn ? <Loader size={20} className="animate-spin" /> : "LOGIN" }
                     </button>
 
-                    <p className="text-[13px] text-slate-800 mt-3">
+                    <p className="text-[13px] text-(--text-secondary) mt-4 text-center">
                         Don't have an Account?{" "}
                         <Link 
                             to="/signup"
-                            className="font-[Comfortaa] font-medium text-primary underline hover:opacity-80 transition-all"
+                            className="font-[Basic] font-medium text-income 
+                            hover:text-brand-teal hover:underline transition-colors"
                         >
                             Signup
                         </Link>

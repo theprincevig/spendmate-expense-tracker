@@ -8,6 +8,7 @@ export default function AiQuickActions() {
         <div className="w-full flex gap-2 justify-start p-1 x-scrollbar">
             {AI_QUICK_ACTIONS.map((action, idx) => (
                 <button
+                    type="button"
                     key={idx}
                     onClick={() => sendMessage(action.message)}
                     className="AI_quick-btns"
