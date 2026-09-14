@@ -8,21 +8,10 @@ router.post("/login", authController.loginUser);
 
 router.post("/verify-email", authController.verifyEmail);
 
-router.post("/forgot-password", authController.forgotPassword);
-router.post("/forgot-password-otp/verify", authController.verifyForgotPasswordOtp);
-
-router.post("/reset-password/:token", authController.resetPassword);
-
 router.get(
     "/session",
     protect,
     authController.checkAuth
-);
-
-router.post(
-    "/change-password",
-    protect,
-    authController.changePassword
 );
 
 router.delete(

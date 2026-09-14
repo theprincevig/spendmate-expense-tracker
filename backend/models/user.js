@@ -42,7 +42,7 @@ const userSchema = new Schema({
         enum: Object.keys(currencyConfig),
         default: "INR"
     },
-    Address: {
+    country: {
         type: String,
         trim: true,
         default: ""

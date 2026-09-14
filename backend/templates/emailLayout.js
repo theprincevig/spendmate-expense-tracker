@@ -105,7 +105,7 @@ module.exports.emailLayout = (content, expiryText) => (`
     <div class="email-wrapper">
         <div class="email-container">
             <div class="brand">
-                Spendmate <span>Expense Tracker</span>
+                SpendMate <span>Expense Tracker</span>
             </div>
 
             ${content}

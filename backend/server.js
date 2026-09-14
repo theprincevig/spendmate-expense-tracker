@@ -4,7 +4,7 @@ if (process.env.NODE_ENV !== "production") {
 
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 3030;
 
 const express = require("express");
 const cors = require("cors");
@@ -21,6 +21,7 @@ const expenseRouter = require('./routes/expense.routes.js');
 const dashboardRouter = require('./routes/dashboard.routes.js');
 const aiRouter = require('./routes/ai.routes.js');
 const exchangeRateRouter = require('./routes/exchangeRate.routes.js');
+const passwordRouter = require('./routes/password.routes.js');
 
 const app = express();
 
@@ -48,6 +49,7 @@ app.use("/api/expense", expenseRouter);
 app.use("/api/income", incomeRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/exchange-rates", exchangeRateRouter);
+app.use("/api/password", passwordRouter);
 
 app.all("/files{/*path}", (req, res, next) => {
   next(new AppError(404, "Page not found!"));

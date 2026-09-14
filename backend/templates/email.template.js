@@ -2,13 +2,13 @@ const { emailLayout } = require("./emailLayout");
 
 module.exports.verifyEmailTemplate = (otp) => emailLayout(`
     <h1 class="title">
-        Verify your Spendmate account
+        Verify your SpendMate account
     </h1>
 
     <p class="text">
         Dear user,
         <br><br>
-        Please use the following verification code to verify your Spendmate account.
+        Please use the following verification code to verify your SpendMate account.
     </p>
 
     <div class="otp">
@@ -18,13 +18,13 @@ module.exports.verifyEmailTemplate = (otp) => emailLayout(`
 
 module.exports.resetPasswordTemplate = (resetUrl) => emailLayout(`
     <h1 class="title">
-        Reset your Spendmate password
+        Reset your SpendMate password
     </h1>
 
     <p class="text">
         Dear user,
         <br><br>
-        We received a request to reset your Spendmate password.
+        We received a request to reset your SpendMate password.
         Click the button below to create a new password.
     </p>
 
@@ -44,6 +44,6 @@ module.exports.resetSuccessTemplate = () => emailLayout(`
         Dear user,
         <br><br>
         Your password has been successfully reset.
-        You can now log in to your Spendmate account with your new password.
+        You can now log in to your SpendMate account with your new password.
     </p>
 `, "This is a confirmation message. No action is required.");

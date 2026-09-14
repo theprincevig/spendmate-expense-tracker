@@ -9,7 +9,7 @@ const currencyConfig = require('../config/currency.Config.js');
 // =======================
 // Helpers
 // =======================
-const SAFE_FIELDS = "fullName email profilePic dob currency";
+const SAFE_FIELDS = "fullName email profilePic dob gender phone address currency";
 
 const deleteFromCloudinary = async (imageUrl) => {
   if (!imageUrl || !imageUrl.includes("res.cloudinary.com")) return;
@@ -33,11 +33,17 @@ const applyProfileUpdates = async (user, profileData, req) => {
     email,
     dob,
     profilePic,
+    gender,
+    phone,
+    country,
     currency
   } = profileData;
 
   if (fullName !== undefined) user.fullName = fullName;
   if (dob !== undefined) user.dob = dob;
+  if (phone !== undefined) user.phone = phone;
+  if (gender !== undefined) user.gender = gender;
+  if (country !== undefined) user.country = country;
 
   if (email !== undefined && email !== user.email) {
     const existingUser = await User.findOne({
@@ -116,6 +122,7 @@ module.exports.updateProfile = async (req, res) => {
 
     return res.status(200).json({
       success: true,
+      message: "Profile updated successfully!",
       user: updatedUser
     });
 
