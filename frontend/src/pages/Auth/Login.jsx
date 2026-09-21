@@ -79,7 +79,7 @@ export default function Login() {
                     />
 
                     {/* Forgot password */}
-                    <div className="text-left text-xs px-2 mt-1">
+                    <div className="text-left px-2 my-1">
                         <Link 
                             to={"/password/forgot"}
                             className="text-xs font-medium text-income 

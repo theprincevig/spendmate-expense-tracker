@@ -36,8 +36,8 @@ export default function Signup() {
         try {
             await signup(formData);
             setFormData(data);
-            navigate("/dashboard");
-            toast.success("Welcome to Spendmate!");
+            navigate("/verify-email");
+            toast.success("Verify email to activate account.");
 
         } catch (error) {
             console.error(error.error);
