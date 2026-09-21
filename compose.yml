@@ -3,7 +3,7 @@ services:
     image: redis
     container_name: spendmate-redis
     ports:
-      - "6600:6379"
+      - "6379:6379"
     command: ["redis-server", "--appendonly", "yes"]
     volumes:
       - redis-data:/data
