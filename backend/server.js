@@ -1,35 +1,35 @@
 if (process.env.NODE_ENV !== "production") {
-    require('dotenv').config();
+  require("dotenv").config();
 }
 
-const port = process.env.PORT || 5000;
+// process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
+
+const port = process.env.PORT || 3030;
 
 const express = require("express");
 const cors = require("cors");
-const cookieParser = require('cookie-parser');
+const cookieParser = require("cookie-parser");
 const helmet = require("helmet");
 const compression = require("compression");
 const { connectDB } = require("./config/db");
-const AppError = require('./errors/AppError.js');
+const AppError = require("./errors/AppError.js");
 
-const authRouter = require('./routes/auth.routes.js');
-const profileRouter = require('./routes/profile.routes.js');
-const incomeRouter = require('./routes/income.routes.js');
-const expenseRouter = require('./routes/expense.routes.js');
-const dashboardRouter = require('./routes/dashboard.routes.js');
-const aiRouter = require('./routes/ai.routes.js');
-const exchangeRateRouter = require('./routes/exchangeRate.routes.js');
+const authRouter = require("./routes/auth.routes.js");
+const profileRouter = require("./routes/profile.routes.js");
+const incomeRouter = require("./routes/income.routes.js");
+const expenseRouter = require("./routes/expense.routes.js");
+const dashboardRouter = require("./routes/dashboard.routes.js");
+const aiRouter = require("./routes/ai.routes.js");
+const exchangeRateRouter = require("./routes/exchangeRate.routes.js");
+const passwordRouter = require("./routes/password.routes.js");
 
 const app = express();
 
 // Middleware to handle CORS
 const corsOptions = {
-    origin: 
-      process.env.NODE_ENV === "production"
-        ? process.env.CLIENT_URL
-        : "http://localhost:5173",
-    credentials: true,
-}
+  origin: process.env.CLIENT_URL,
+  credentials: true,
+};
 
 app.use(helmet());
 app.use(compression());
@@ -46,6 +46,7 @@ app.use("/api/expense", expenseRouter);
 app.use("/api/income", incomeRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/exchange-rates", exchangeRateRouter);
+app.use("/api/password", passwordRouter);
 
 app.all("/files{/*path}", (req, res, next) => {
   next(new AppError(404, "Page not found!"));

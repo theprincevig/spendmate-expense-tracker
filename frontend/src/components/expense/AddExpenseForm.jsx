@@ -14,6 +14,7 @@ export default function AddExpenseForm({
             ...prev,
             [field]: e.target.value
         }));
+        
         setErrors(prev => ({
             ...prev,
             [field]: ""
@@ -25,9 +26,14 @@ export default function AddExpenseForm({
             <EmojiPickerPopup 
                 icon={data.icon}
                 onSelected={(selectedIcon) => {
-                    setData(prev => ({
+                    setData((prev) => ({
                         ...prev,
                         icon: selectedIcon
+                    }));
+
+                    setErrors((prev) => ({
+                        ...prev,
+                        icon: ""
                     }));
                 }}
             />
@@ -63,7 +69,7 @@ export default function AddExpenseForm({
                 <button
                     type="button"
                     onClick={onAddExpense}
-                    className="add-btn hover:add-btn-fill"
+                    className="expense-btn"
                 >
                     Add <Plus size={14} />
                 </button>

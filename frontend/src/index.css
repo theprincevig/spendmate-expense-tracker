@@ -1,278 +1,1249 @@
-@import url('https://fonts.googleapis.com/css2?family=Basic&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Zen+Dots&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Basic&family=Genos:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
 @import "tailwindcss";
 
 
-@theme {
-    --font-display: "Poppins", "sans-serif";
-    --breakpoint-3xl: 1920px;
-    --color-primary: #875cf5;
+/* ==================================================
+   SpendMate Design System — v1.1.1
+   --------------------------------------------------
+   Same brand palette as v1.x — untouched on purpose,
+   it's your logo's identity. What changed:
+   - shared shadow/gradient tokens so components stop
+     repeating the same rgba() values
+   - a single .btn base so auth/expense/income buttons
+     share one definition instead of three
+   - new auth-flow components: OTP boxes, verification
+     banner, password-strength meter, resend timer
+   ================================================== */
+
+:root {
+
+  /* --------------------------------------------------
+     Brand (unchanged — do not edit without design sign-off)
+     -------------------------------------------------- */
+
+  --brand-red: #FF304F;
+  --brand-coral: #FF6A3D;
+  --brand-lime: #7ED957;
+  --brand-teal: #00BFA6;
+
+  --brand-gradient: linear-gradient(
+    135deg,
+    var(--brand-red) 0%,
+    var(--brand-coral) 35%,
+    var(--brand-lime) 65%,
+    var(--brand-teal) 100%
+  );
+
+  --income-gradient: linear-gradient(
+    135deg,
+    var(--brand-lime),
+    var(--brand-teal)
+  );
+
+  --expense-gradient: linear-gradient(
+    135deg,
+    var(--brand-red),
+    var(--brand-coral)
+  );
+
+
+  /* --------------------------------------------------
+     AI
+     -------------------------------------------------- */
+
+  --ai-indigo: #5B6CFF;
+  --ai-teal-deep: #008F83;
+
+  --ai-gradient: linear-gradient(
+    135deg,
+    var(--brand-teal),
+    var(--ai-teal-deep),
+    var(--ai-indigo)
+  );
+
+
+  /* --------------------------------------------------
+     Semantic status
+     (drives verification banners + password strength —
+     built from brand colors, nothing new introduced)
+     -------------------------------------------------- */
+
+  --status-success: var(--brand-teal);
+  --status-success-strong: #00A878;
+  --status-warning: var(--brand-coral);
+  --status-error: var(--brand-red);
+  --status-pending: var(--text-secondary);
+
+  /* "fair/moderate" sits between warning and success on the
+     password meter — your existing component already uses this
+     amber, it just wasn't tokenized. Flagging that it's the one
+     color in the system that isn't from the core brand palette. */
+  --status-fair: #D99000;
+  --status-fair-light: #FFB547;
+  --status-fair-lighter: #FFD166;
+
+
+  /* --------------------------------------------------
+     Background
+     -------------------------------------------------- */
+
+  --background: #F6F8FA;
+
+
+  /* --------------------------------------------------
+     Text
+     -------------------------------------------------- */
+
+  --text-primary: #171A1F;
+  --text-secondary: #667085;
+  --text-muted: #98A2B3;
+
+
+  /* --------------------------------------------------
+     Finance
+     -------------------------------------------------- */
+
+  --income: #00A878;
+  --expense: #FF304F;
+
+
+  /* --------------------------------------------------
+     Glass
+     -------------------------------------------------- */
+
+  --glass-bg: rgba(255, 255, 255, 0.55);
+  --glass-bg-strong: rgba(255, 255, 255, 0.72);
+  --glass-bg-subtle: rgba(255, 255, 255, 0.38);
+
+  --glass-border: rgba(255, 255, 255, 0.65);
+  --glass-border-strong: rgba(255, 255, 255, 0.8);
+
+  --glass-shadow: 0 8px 32px rgba(15, 23, 42, 0.08);
+  --glass-shadow-hover: 0 12px 36px rgba(15, 23, 42, 0.08);
+
+  --glass-blur: 20px;
+  --glass-blur-strong: 24px;
+
+
+  /* --------------------------------------------------
+     Shadow tokens
+     (one place for every gradient's glow color, instead
+     of the same rgba() repeated under every component
+     that uses that gradient)
+     -------------------------------------------------- */
+
+  --shadow-teal-soft: rgba(0, 191, 166, 0.12);
+  --shadow-teal: rgba(0, 191, 166, 0.18);
+  --shadow-teal-strong: rgba(0, 191, 166, 0.25);
+
+  --shadow-expense-soft: rgba(255, 48, 79, 0.18);
+  --shadow-expense-strong: rgba(255, 48, 79, 0.25);
+
+  --shadow-ai: rgba(0, 143, 131, 0.18);
+  --shadow-ai-strong: rgba(0, 143, 131, 0.25);
+  --shadow-ai-glow: rgba(91, 108, 255, 0.12);
+  --shadow-ai-glow-strong: rgba(91, 108, 255, 0.18);
+
+  --shadow-card: 4px 10px 30px rgba(15, 23, 42, 0.2);
+
+
+  /* --------------------------------------------------
+     Interaction
+     -------------------------------------------------- */
+
+  --focus-color: rgba(0, 191, 166, 0.45);
+  --focus-ring: rgba(0, 191, 166, 0.08);
+
+  --danger-bg: rgba(255, 48, 79, 0.07);
+  --danger-border: rgba(255, 48, 79, 0.25);
+
+  --success-bg: rgba(0, 191, 166, 0.07);
+  --success-border: rgba(0, 191, 166, 0.25);
+
 }
+
+
+/* ==================================================
+   Tailwind Theme
+   ================================================== */
+
+@theme {
+
+  --font-display: "Poppins", sans-serif;
+
+  --breakpoint-3xl: 1920px;
+
+  --color-primary: #00BFA6;
+  --color-income: #00A878;
+  --color-expense: #FF304F;
+
+  --color-brand-red: #FF304F;
+  --color-brand-coral: #FF6A3D;
+  --color-brand-lime: #7ED957;
+  --color-brand-teal: #00BFA6;
+
+}
+
+
+/* ==================================================
+   Base
+   ================================================== */
 
 @layer base {
-    html {
-        font-family: var(--font-display);
-    }
 
-    body {
-        background: #fcfbfc;
-        overflow-x: hidden;
+  html {
+    font-family: var(--font-display);
+  }
+
+  body {
+    min-height: 100vh;
+
+    background:
+      radial-gradient(
+        circle at 8% 8%,
+        rgba(255, 48, 79, 0.10),
+        transparent 28%
+      ),
+
+      radial-gradient(
+        circle at 92% 12%,
+        rgba(0, 191, 166, 0.10),
+        transparent 28%
+      ),
+
+      radial-gradient(
+        circle at 50% 100%,
+        rgba(126, 217, 87, 0.08),
+        transparent 32%
+      ),
+
+      var(--background);
+
+    color: var(--text-primary);
+
+    overflow-x: hidden;
+  }
+
+  /* Respect reduced-motion across every animation below */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
     }
+  }
+
 }
+
+
+/* ==================================================
+   Brand Utilities
+   ================================================== */
 
 @layer utilities {
-    .logofont {
-      font-family: "Zen Dots", sans-serif;
-    }
+
+  .brand-gradient {
+    background: var(--brand-gradient);
+  }
+
+  .income-gradient {
+    background: var(--income-gradient);
+  }
+
+  .expense-gradient {
+    background: var(--expense-gradient);
+  }
+
+  .ai-gradient {
+    background: var(--ai-gradient);
+  }
+
+  .brand-gradient-text {
+    background: var(--brand-gradient);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+  }
 }
 
+
+/* ==================================================
+   Glassmorphism
+   ================================================== */
+
+/*
+   .glass          = default glass surface
+   .glass-strong    = stronger / more opaque surface (modals, popovers)
+   .glass-subtle    = lighter surface (nested elements inside a glass card,
+                       e.g. OTP boxes sitting inside an auth-card)
+
+   Components should NOT redefine background / border / backdrop-filter /
+   box-shadow if they already use one of these classes.
+*/
+
+.glass {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+
+.glass-strong {
+  background: var(--glass-bg-strong);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+
+  backdrop-filter: blur(var(--glass-blur-strong));
+  -webkit-backdrop-filter: blur(var(--glass-blur-strong));
+}
+
+
+.glass-subtle {
+  background: var(--glass-bg-subtle);
+  border: 1px solid var(--glass-border);
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+
+/* ==================================================
+   Input
+   ================================================== */
 
 .input-box {
-    @apply w-full flex justify-between gap-3 text-sm text-black rounded-full px-4 py-3 mb-4 mt-3 border outline-none transition-all;
+
+  @apply flex items-center justify-between gap-3
+    text-sm
+    rounded-full
+    px-4 py-3
+    mb-4 mt-3
+    outline-none
+    transition-all duration-200;
+
 }
 
-.btn-success {
-    @apply w-full text-sm font-medium text-white bg-emerald-500 shadow-lg shadow-emerald-600/5 p-2 rounded-lg my-2 hover:bg-emerald-600/15 hover:text-green-700 disabled:bg-gray-400 cursor-pointer transition-all
+
+/* Input gets its glass from: className="glass input-box" */
+
+
+.input-box:focus-within {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 3px var(--focus-ring);
 }
 
-.btn-cancel {
-    @apply w-full flex items-center justify-center gap-1 text-sm font-medium text-white bg-gray-500 shadow-lg shadow-gray-600/5 p-2 rounded-lg my-1 hover:bg-gray-600/15 hover:text-gray-700 disabled:bg-gray-400 cursor-pointer transition-all
+
+.input-box-error {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
 }
+
+
+.input-box-error:focus-within {
+  border-color: rgba(255, 48, 79, 0.40);
+  box-shadow: 0 0 0 3px rgba(255, 48, 79, 0.08);
+}
+
+
+.input-box-success {
+  background: var(--success-bg);
+  border-color: var(--success-border);
+}
+
+
+.input-box-success:focus-within {
+  border-color: rgba(0, 191, 166, 0.40);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+
+/* ==================================================
+   Buttons
+   ================================================== */
+
+/*
+   Shared foundation, one definition of the hover/active/disabled
+   behaviour. Every gradient button (.auth-btn, .expense-btn,
+   .income-btn) only needs to set --btn-gradient / --btn-shadow /
+   --btn-shadow-hover — the shared rules below do the rest.
+
+   Adding a new colored button (e.g. a future "transfer" button)
+   means adding ONE small block, not a full copy of hover/active/
+   disabled states.
+*/
+
+.auth-btn,
+.expense-btn,
+.income-btn {
+
+  @apply inline-flex items-center justify-center
+    text-sm font-medium
+    text-white
+    cursor-pointer
+    transition-all duration-200;
+
+  background: var(--btn-gradient);
+  box-shadow: 0 6px 18px var(--btn-shadow);
+}
+
+
+.auth-btn:hover:not(:disabled),
+.expense-btn:hover:not(:disabled),
+.income-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 9px 24px var(--btn-shadow-hover);
+}
+
+
+.auth-btn:active:not(:disabled),
+.expense-btn:active:not(:disabled),
+.income-btn:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+
+.auth-btn:disabled,
+.expense-btn:disabled,
+.income-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* --------------------------------------------------
+   Auth Button — used for login / sign up / verify /
+   reset-password submit actions
+   -------------------------------------------------- */
+
+.auth-btn {
+
+  @apply w-full py-2.5 rounded-xl;
+
+  --btn-gradient: var(--brand-gradient);
+  --btn-shadow: var(--shadow-teal-soft);
+  --btn-shadow-hover: var(--shadow-teal);
+}
+
+
+/* --------------------------------------------------
+   Expense Button
+   -------------------------------------------------- */
+
+.expense-btn {
+
+  @apply px-5 py-2.5 rounded-xl;
+
+  --btn-gradient: var(--expense-gradient);
+  --btn-shadow: var(--shadow-expense-soft);
+  --btn-shadow-hover: var(--shadow-expense-strong);
+}
+
+
+/* --------------------------------------------------
+   Income Button
+   -------------------------------------------------- */
+
+.income-btn {
+
+  @apply px-5 py-2.5 rounded-xl;
+
+  --btn-gradient: var(--income-gradient);
+  --btn-shadow: var(--shadow-teal);
+  --btn-shadow-hover: var(--shadow-teal-strong);
+}
+
+
+/* --------------------------------------------------
+   Secondary / ghost button
+   (NEW — for "Resend OTP", "Back to login", "Change email"
+   style secondary actions next to an .auth-btn)
+   -------------------------------------------------- */
+
+.btn-ghost {
+
+  @apply inline-flex items-center justify-center
+    gap-2 text-sm font-medium
+    px-4 py-2 rounded-xl
+    cursor-pointer
+    transition-all duration-200;
+
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--glass-border-strong);
+}
+
+
+.btn-ghost:hover:not(:disabled) {
+  color: var(--brand-teal);
+  background: rgba(0, 191, 166, 0.06);
+  border-color: rgba(0, 191, 166, 0.25);
+}
+
+
+.btn-ghost:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ==================================================
+   Close & Delete Button
+   ================================================== */
+
+.close-btn {
+
+  @apply shrink-0 w-9 h-9
+    flex items-center justify-center
+    rounded-full
+    text-(--text-secondary)
+    transition-all duration-200
+    cursor-pointer;
+
+}
+
+
+.close-btn:hover {
+  color: var(--brand-red);
+  background: rgba(255, 48, 79, 0.10);
+}
+
+.delete-btn {
+
+  @apply shrink-0 w-9 h-9
+    flex items-center justify-center
+    rounded-full
+    text-(--text-muted)
+    border border-transparent
+    transition-all duration-200
+    cursor-pointer;
+
+}
+
+.delete-btn:hover {
+  color: var(--status-error);
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+
+.delete-btn:active {
+  transform: scale(0.95);
+}
+
+.delete-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* ==================================================
+   Image Upload
+   ================================================== */
+
+.img-upload,
+.img-remove {
+
+  @apply w-8 h-8
+    flex items-center justify-center
+    text-white
+    rounded-full
+    absolute
+    -bottom-1 -right-1
+    cursor-pointer
+    transition-all duration-250;
+
+}
+
 
 .img-upload {
-    @apply w-8 h-8 flex items-center justify-center bg-green-600 text-white rounded-full absolute -bottom-1 -right-1 cursor-pointer hover:scale-90 transition-all duration-100
+  background: var(--income-gradient);
 }
+
 
 .img-remove {
-    @apply w-8 h-8 flex items-center justify-center bg-red-600 text-white rounded-full absolute -bottom-1 -right-1 cursor-pointer hover:scale-90 transition-all duration-100
+  background: var(--expense-gradient);
 }
+
+
+.img-upload:hover,
+.img-remove:hover {
+  transform: scale(0.90);
+}
+
+
+/* ==================================================
+   Cards
+   ================================================== */
+
+/*
+   .card handles CARD layout only. Use: className="glass card"
+   This keeps glass styling reusable.
+*/
 
 .card {
-    @apply bg-white p-6 rounded-2xl shadow-md shadow-gray-100 border border-gray-200/50;
+
+  @apply relative
+    p-5 md:p-6
+    rounded-2xl
+    transition-all duration-300;
+
 }
+
+
+.card:hover {
+  box-shadow: var(--shadow-card);
+}
+
+
+/* ==================================================
+   Card Button
+   ================================================== */
+
+/*
+   Use: className="glass card-btn"
+   .glass = surface, .card-btn = component styling
+*/
 
 .card-btn {
-    @apply flex items-center gap-3 text-xs font-medium text-gray-700 hover:text-green-500 bg-gray-50 hover:bg-emerald-50 px-4 py-1.5 rounded-lg border border-gray-200/50 transition-all cursor-pointer;
+
+  @apply flex items-center gap-3
+    text-xs font-medium
+    px-4 py-1.5
+    rounded-lg
+    transition-all
+    cursor-pointer;
+
+  color: var(--text-secondary);
+
 }
 
-.add-btn {
-    @apply flex items-center gap-1.5 text-xs md:text-sm font-medium text-green-600 whitespace-nowrap bg-emerald-50 border border-green-100 rounded-xl px-4 py-2 cursor-pointer;
+
+.card-btn:hover {
+  color: var(--brand-teal);
+  background: rgba(0, 191, 166, 0.08);
+  border-color: rgba(0, 191, 166, 0.18);
 }
 
-.add-btn-fill {
-    @apply text-white bg-green-500;
+
+/* ==================================================
+   OTP Input (NEW — v1.1.1)
+   Used for forgot-password OTP and email-verification
+   codes sent by mail.
+
+   Markup shape:
+   <div class="otp-group">
+     <input class="glass-subtle otp-box" maxlength="1" />
+     ... x6
+   </div>
+   -------------------------------------------------- */
+
+.otp-group {
+  @apply flex items-center justify-center gap-2 md:gap-3 my-4;
 }
 
-/* -------------------------------------------------- */
-/* ⚡ Shimmer Effect (Loading Placeholder)            */
-/* -------------------------------------------------- */
+
+.otp-box {
+
+  @apply w-11 h-12 md:w-12 md:h-14
+    text-center text-lg font-semibold
+    rounded-xl
+    outline-none
+    transition-all duration-200;
+
+  color: var(--text-primary);
+  border: 1px solid var(--glass-border);
+}
+
+
+.otp-box:focus {
+  border-color: var(--focus-color);
+  box-shadow: 0 0 0 3px var(--focus-ring);
+}
+
+
+.otp-box-error {
+  background: var(--danger-bg);
+  border-color: var(--danger-border);
+}
+
+
+.otp-box-filled {
+  border-color: rgba(0, 191, 166, 0.35);
+}
+
+
+/* --------------------------------------------------
+   Resend timer / link — pairs with the OTP group
+   -------------------------------------------------- */
+
+.resend-timer {
+  @apply text-xs text-center mt-2;
+  color: var(--text-muted);
+}
+
+
+.resend-link {
+  @apply text-xs font-medium cursor-pointer transition-colors duration-200;
+  color: var(--brand-teal);
+}
+
+
+.resend-link:hover {
+  color: var(--ai-teal-deep);
+}
+
+
+.resend-link[data-disabled="true"] {
+  color: var(--text-muted);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+
+/* ==================================================
+   Verification / Status Banner (NEW — v1.1.1)
+   For "check your inbox", "email verified", "link expired"
+   type messages on the auth screens.
+
+   Use: className="glass verify-banner verify-banner-success"
+   Variants: -pending (default), -success, -error
+   -------------------------------------------------- */
+
+.verify-banner {
+
+  @apply flex items-start gap-3
+    text-sm
+    px-4 py-3
+    rounded-xl
+    mb-4;
+
+  color: var(--text-secondary);
+  border-left: 3px solid var(--status-pending);
+}
+
+
+.verify-banner-success {
+  color: var(--text-primary);
+  background: var(--success-bg);
+  border-left-color: var(--status-success-strong);
+}
+
+
+.verify-banner-error {
+  color: var(--text-primary);
+  background: var(--danger-bg);
+  border-left-color: var(--status-error);
+}
+
+
+.verify-banner-pending {
+  border-left-color: var(--brand-coral);
+}
+
+
+/* ==================================================
+   Password Strength Meter (NEW — v1.1.1)
+   A single continuous fill bar (0–100% width) rather than
+   discrete segments, since that's the pattern already in use
+   across the app's password field.
+ 
+   Markup shape:
+   <div class="pw-meter-header"> label ... <span class="pw-meter-label" data-level="...">Strong</span> </div>
+   <div class="pw-meter-track">
+     <div class="pw-meter-fill" data-level="weak|fair|strong|excellent" style={{ width: "..%" }} />
+   </div>
+   -------------------------------------------------- */
+ 
+.pw-meter-header {
+  @apply flex justify-between items-center mb-2 text-xs font-medium;
+}
+ 
+ 
+.pw-meter-track {
+  @apply w-full rounded-full h-1.5 overflow-hidden;
+  background: rgba(102, 112, 133, 0.15);
+}
+ 
+ 
+.pw-meter-fill {
+  @apply h-full rounded-full transition-all duration-500 ease-out;
+  background: var(--pw-fill);
+}
+ 
+ 
+.pw-meter-fill[data-level="weak"] {
+  --pw-fill: var(--expense-gradient);
+}
+ 
+ 
+.pw-meter-fill[data-level="fair"] {
+  --pw-fill: linear-gradient(90deg, var(--status-fair-light), var(--status-fair-lighter));
+}
+ 
+ 
+.pw-meter-fill[data-level="strong"] {
+  --pw-fill: linear-gradient(90deg, var(--brand-lime), var(--brand-teal));
+}
+ 
+ 
+.pw-meter-fill[data-level="excellent"] {
+  --pw-fill: linear-gradient(90deg, var(--brand-teal), var(--brand-lime));
+}
+ 
+ 
+.pw-meter-label[data-level="weak"] {
+  color: var(--status-error);
+}
+ 
+ 
+.pw-meter-label[data-level="fair"] {
+  color: var(--status-fair);
+}
+ 
+ 
+.pw-meter-label[data-level="strong"],
+.pw-meter-label[data-level="excellent"] {
+  color: var(--status-success-strong);
+}
+ 
+ 
+/* --------------------------------------------------
+   Password Criteria checklist (met / unmet rows)
+   -------------------------------------------------- */
+ 
+.pw-criteria-row {
+  @apply flex items-center text-xs;
+}
+ 
+ 
+.pw-criteria-row[data-met="true"] {
+  color: var(--status-success-strong);
+}
+ 
+ 
+.pw-criteria-row[data-met="false"] {
+  color: var(--text-secondary);
+}
+
+
+/* ==================================================
+   Shimmer
+   ================================================== */
+
 .shimmer {
   position: relative;
   overflow: hidden;
-  background-color: #ffffff;    /* light */
+  background-color: #ffffff;
 }
+
 
 .dark .shimmer {
-  background-color: #1f2937; /* dark */
+  background-color: #1f2937;
 }
 
+
 .shimmer::before {
+
   content: "";
   position: absolute;
   inset: 0;
+
   background: linear-gradient(
     90deg,
     rgba(0, 0, 0, 0.03),
     rgba(0, 0, 0, 0.06),
     rgba(0, 0, 0, 0.03)
   );
+
   animation: shimmer 1.5s infinite;
+
 }
 
+
 .dark .shimmer::before {
+
   background: linear-gradient(
     90deg,
     transparent,
     rgba(255, 255, 255, 0.08),
     transparent
   );
+
 }
+
 
 @keyframes shimmer {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(100%);
-  }
+  from { transform: translateX(-100%); }
+  to { transform: translateX(100%); }
 }
 
-/* AI Chatbox styling */
-/* .input-bg {
-  background: linear-gradient(to top right, #1cb484, #ffffff);
-} */
+
+/* ==================================================
+   AI Chat Input
+   ================================================== */
+
+/*
+   Use: className="glass AI_chat-input"
+   AI_chat-input controls ONLY input-specific behavior.
+*/
 
 .AI_chat-input {
-  @apply w-full font-medium outline-none text-sm px-6 py-3 rounded-full shadow-md inset-shadow-sm active:scale-99 transition-all duration-100;
+
+  @apply w-full outline-none text-sm;
+
+  min-height: 46px;
+  padding: 0 18px;
+  color: var(--text-primary);
+  border-radius: 999px;
+
+  transition:
+    border-color 200ms ease,
+    box-shadow 200ms ease,
+    background 200ms ease;
+
 }
 
-.AI_chat-input:placeholder-shown {
-  @apply text-sm font-[Basic] font-medium;
+
+.AI_chat-input::placeholder {
+  color: var(--text-muted);
 }
+
+
+.AI_chat-input:focus {
+
+  background: var(--glass-bg-strong);
+  border-color: var(--focus-color);
+
+  box-shadow:
+    0 0 0 3px var(--focus-ring),
+    0 6px 20px rgba(15, 23, 42, 0.05);
+
+}
+
+
+.AI_chat-input:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+
+/* ==================================================
+   AI Send Button
+   ================================================== */
 
 .AI_send-btn {
-  @apply flex items-center justify-center bg-emerald-400 hover:bg-emerald-500 text-white p-2 rounded-full shadow-md hover:scale-108 active:scale-99 transition-all duration-150 cursor-pointer;
+
+  @apply shrink-0 flex items-center justify-center;
+
+  width: 46px;
+  height: 46px;
+  color: white;
+
+  background: var(--ai-gradient);
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.40);
+
+  box-shadow:
+    0 7px 20px var(--shadow-ai),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+
+  cursor: pointer;
+
+  transition:
+    transform 200ms ease,
+    box-shadow 200ms ease,
+    opacity 200ms ease;
+
 }
+
+
+.AI_send-btn:hover:not(:disabled) {
+
+  transform: translateY(-1px) scale(1.03);
+
+  box-shadow:
+    0 10px 26px var(--shadow-ai-strong),
+    0 0 18px var(--shadow-ai-glow);
+
+}
+
+
+.AI_send-btn:active:not(:disabled) {
+  transform: scale(0.96);
+}
+
+
+.AI_send-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+
+/* ==================================================
+   AI Reset Button
+   ================================================== */
+
+/* Use: className="glass AI_reset-btn" */
+
+.AI_reset-btn {
+
+  @apply shrink-0 flex items-center justify-center;
+
+  width: 46px;
+  height: 46px;
+  
+  color: var(--ai-teal-deep);
+  border-radius: 999px;
+  cursor: pointer;
+
+  transition:
+    color 200ms ease,
+    background 200ms ease,
+    border-color 200ms ease,
+    transform 200ms ease;
+
+}
+
+
+.AI_reset-btn:hover:not(:disabled) {
+  color: var(--brand-teal);
+  background: rgba(91, 108, 255, 0.08);
+  border-color: rgba(91, 108, 255, 0.18);
+}
+
+
+.AI_reset-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ==================================================
+   AI Reset Spin
+   ================================================== */
+
+.AI_glow-spin {
+  animation: AI_glow-spin 800ms ease-in-out;
+}
+
+
+@keyframes AI_glow-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+
+/* ==================================================
+   AI Quick Actions
+   ================================================== */
+
+/* Use: className="glass AI_quick-btns" */
 
 .AI_quick-btns {
-  @apply bg-emerald-50 text-green-500 hover:bg-emerald-500 hover:text-white rounded-full shadow-md text-xs px-4 py-2 whitespace-nowrap hover:scale-105 transition-all duration-200 cursor-pointer disabled:opacity-50;
+
+  @apply shrink-0
+    px-3 py-1.5
+    rounded-full
+    text-sm
+    font-[Genos]
+    font-medium
+    whitespace-nowrap
+    cursor-pointer;
+
+  color: var(--text-secondary);
+
+  transition:
+    color 200ms ease,
+    background 200ms ease,
+    border-color 200ms ease,
+    transform 200ms ease,
+    box-shadow 200ms ease;
+
 }
 
-/* Hide scrollbar but allow scroll */
+
+.AI_quick-btns:hover:not(:disabled) {
+
+  color: var(--ai-teal-deep);
+  background: rgba(0, 191, 166, 0.08);
+  border-color: rgba(0, 191, 166, 0.20);
+  transform: translateY(-1px);
+
+  box-shadow: 0 5px 16px var(--shadow-teal-soft);
+
+}
+
+
+.AI_quick-btns:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+
+.AI_quick-btns:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+
+/* ==================================================
+   Horizontal Scrollbar
+   ================================================== */
+
 .x-scrollbar {
+
   overflow-x: auto;
   overflow-y: hidden;
   white-space: nowrap;
+
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
-
   scrollbar-width: none;
   scroll-snap-type: x proximity;
-
   touch-action: pan-x;
+
 }
+
 
 .x-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
+
 .x-scrollbar > * {
   scroll-snap-align: start;
 }
 
-/* AI floating button for chatbox MODAL */
+
+/* ==================================================
+   AI Assistant
+   ================================================== */
+
 .AI_floating-btn {
-  @apply w-10 h-10 hover:w-40 flex items-center bg-emerald-50 text-green-600 rounded-full shadow-md transition-all duration-300 ease-out overflow-hidden cursor-pointer;
+
+  color: white;
+  background: var(--ai-gradient);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+
+  box-shadow:
+    0 10px 30px var(--shadow-ai-strong),
+    inset 0 1px 1px rgba(255, 255, 255, 0.25);
+
+  cursor: pointer;
+
 }
 
-/* AI animations */
-.AI_glow-spin {
-  animation: glow-spin 0.8s ease-in-out;
+
+.AI_floating-btn:hover {
+
+  box-shadow:
+    0 14px 35px var(--shadow-ai-strong),
+    inset 0 1px 1px rgba(255, 255, 255, 0.30);
+
 }
+
+
+/* ==================================================
+   AI Animations
+   ================================================== */
 
 .AI_smart-bounce {
-  animation: smart-bounce 0.9s ease-in-out;
+  animation: AI_smart-bounce 900ms ease-in-out;
 }
+
 
 .AI_glow {
-  animation: ai-glow 2.8s ease-in-out infinite;
+  animation: AI_pulse-glow 3s ease-in-out infinite;
 }
 
-@keyframes glow-spin {
-  0% {
-    transform: rotate(0deg);
-    box-shadow: 0 0 0 rgba(16, 185, 129, 0);
+
+@keyframes AI_pulse-glow {
+
+  0%, 100% {
+    box-shadow:
+      0 10px 30px var(--shadow-ai),
+      0 0 0 rgba(91, 108, 255, 0);
   }
 
   50% {
-    box-shadow: 0 0 12px rgba(16, 185, 129, 0.6);
+    box-shadow:
+      0 10px 30px var(--shadow-ai-strong),
+      0 0 24px var(--shadow-ai-glow-strong);
   }
 
-  100% {
-    transform: rotate(-360deg);
-    box-shadow: 0 0 0 rgba(16, 185, 129, 0);
-  }
 }
 
-@keyframes smart-bounce {
-  0%   { transform: translateY(0); }
-  30%  { transform: translateY(-6px); }
-  60%  { transform: translateY(3px); }
+
+@keyframes AI_smart-bounce {
+  0% { transform: translateY(0); }
+  20% { transform: translateY(-8px); }
+  40% { transform: translateY(0); }
+  60% { transform: translateY(-5px); }
+  80% { transform: translateY(0); }
   100% { transform: translateY(0); }
 }
 
-/* AI floating button glow */
-@keyframes ai-glow {
-  0% {
-    box-shadow:
-      0 0 0 rgba(16, 185, 129, 0),
-      0 0 0 rgba(16, 185, 129, 0);
-  }
 
-  50% {
-    box-shadow:
-      0 0 18px rgba(16, 185, 129, 0.45),
-      0 0 36px rgba(16, 185, 129, 0.25);
-  }
+/* ==================================================
+   Modal Animations
+   ================================================== */
 
-  100% {
-    box-shadow:
-      0 0 0 rgba(16, 185, 129, 0),
-      0 0 0 rgba(16, 185, 129, 0);
-  }
-}
-
-/* -------------------------------------------------- */
-/* Open & Close Effect animation for MODALS           */
-/* -------------------------------------------------- */
 .open {
   animation: open-y-animate 0.2s ease-out;
 }
+
 
 .close {
   animation: close-y-animate 0.2s ease-out;
 }
 
+
 @keyframes open-y-animate {
-  from {
-    transform: scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
+  from { transform: scale(0.95); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
+
 
 @keyframes close-y-animate {
-  from {
-    transform: scale(1);
-    opacity: 1;
-  }
-  to {
-    transform: scale(0.95);
-    opacity: 0;
-  }
+  from { transform: scale(1); opacity: 1; }
+  to { transform: scale(0.95); opacity: 0; }
 }
 
-/* -------------------------------------------------- */
-/* Open & Close Effect animation for MODALS           */
-/* -------------------------------------------------- */
+
+/* ==================================================
+   Modal Slide Animations
+   ================================================== */
+
 .open-y {
-  animation: open-y-animate 0.2s ease-out;
+  animation: open-slide-y 0.2s ease-out;
 }
+
 
 .close-y {
-  animation: close-y-animate 0.2s ease-out;
+  animation: close-slide-y 0.2s ease-out;
 }
 
-@keyframes open-y-animate {
-  from {
-    transform: translateY(40px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0px);
-    opacity: 1;
-  }
+
+@keyframes open-slide-y {
+  from { transform: translateY(40px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
-@keyframes close-y-animate {
-  from {
-    transform: translateY(0px);
-    opacity: 1;
-  }
-  to {
-    transform: translateY(40px);
-    opacity: 0;
-  }
+
+@keyframes close-slide-y {
+  from { transform: translateY(0); opacity: 1; }
+  to { transform: translateY(40px); opacity: 0; }
+}
+
+/* ==================================================
+   Password card soft transition
+   ================================================== */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

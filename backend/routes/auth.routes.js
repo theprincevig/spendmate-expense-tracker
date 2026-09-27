@@ -1,27 +1,16 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
 const authController = require("../controller/auth.controller.js");
-const { protect } = require('../middleware/auth.middleware.js');
+const { protect } = require("../middleware/auth.middleware.js");
 
 router.post("/register", authController.registerUser);
 router.post("/login", authController.loginUser);
 
-router.get(
-    "/session",
-    protect,
-    authController.checkAuth
-);
+router.post("/email/verify", authController.verifyEmail);
+router.post("/email/verify/resend", authController.resendVerifyEmail);
 
-router.post(
-    "/change-password",
-    protect,
-    authController.changePassword
-);
+router.get("/session", protect, authController.checkAuth);
 
-router.delete(
-    "/logout",
-    protect,
-    authController.logoutUser
-);
+router.delete("/logout", protect, authController.logoutUser);
 
 module.exports = router;

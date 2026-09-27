@@ -1,64 +1,71 @@
+import { validatePhone } from "../lib/validators";
+
 export const validateProfile = (profileData) => {
     const errors = {
         fullName: "",
         dob: "",
-        // address: {
-        //     city: "",
-        //     state: "",
-        //     country: "",
-        // },
+        gender: "",
+        phone: "",
+        country: ""
     };
 
-    // Full name
-    if (!profileData.fullName?.trim()) {
-        errors.fullName = "Full Name is required";
-
-    } else if (profileData.fullName.trim().length < 2) {
-        errors.fullName = "Full name must be at least 2 characters";
+    // Full Name — validate only if provided
+    if (profileData.fullName?.trim()) {
+        if (profileData.fullName.trim().length < 2) {
+            errors.fullName = "Full name must be at least 2 characters";
+        }
     }
 
-    // Date of Birth
-    if (!profileData.dob) {
-        errors.dob = "Date of birth is required";
-
-    } else {
+    // Date of Birth — validate only if provided
+    if (profileData.dob) {
         const dob = new Date(profileData.dob);
         const today = new Date();
 
-        if (dob > today) {
+        if (Number.isNaN(dob.getTime())) {
+            errors.dob = "Please enter a valid date of birth";
+
+        } else if (dob > today) {
             errors.dob = "Date of birth cannot be in the future";
-        }
 
-        let age = today.getFullYear() - dob.getFullYear();
+        } else {
+            let age = today.getFullYear() - dob.getFullYear();
 
-        const monthDiff = today.getMonth() - dob.getMonth();
+            const monthDiff = today.getMonth() - dob.getMonth();
 
-        if (
-            monthDiff < 0 ||
-            (monthDiff === 0 && today.getDate() < dob.getDate())
-        ) {
-            age--;
-        }
+            if (
+                monthDiff < 0 ||
+                (monthDiff === 0 && today.getDate() < dob.getDate())
+            ) {
+                age--;
+            }
 
-        if (age < 18) {
-            errors.dob = "You must be at least 18 years old";
+            if (age < 18) {
+                errors.dob = "You must be at least 18 years old";
+            }
         }
     }
 
-    // // Address - City
-    // if (!profileData.address?.city?.trim()) {
-    //     errors.address.city = "City is required";
-    // }
+    // Gender — validate only if provided
+    if (
+        profileData.gender &&
+        !["male", "female", "other"].includes(profileData.gender)
+    ) {
+        errors.gender = "Please select a valid gender";
+    }
 
-    // // Address - State
-    // if (!profileData.address?.state?.trim()) {
-    //     errors.address.state = "State is required";
-    // }
+    // Phone — validate only if provided
+    if (profileData.phone?.trim()) {
+        if (!validatePhone(profileData.phone)) {
+            errors.phone = "Please enter a valid 10-digit phone number";
+        }
+    }
 
-    // // Address - Country
-    // if (!profileData.address?.country?.trim()) {
-    //     errors.address.country = "Country is required";
-    // }
+    // Country — validate only if provided
+    if (profileData.country?.trim()) {
+        if (profileData.country.trim().length < 2) {
+            errors.country = "Please enter a valid country name";
+        }
+    }
 
     return errors;
 };

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Input({
     icon,
@@ -13,51 +13,109 @@ export default function Input({
     const [showPassword, setShowPassword] = useState(false);
 
     function toggleShowPassword() {
-        setShowPassword(!showPassword);
+        setShowPassword((prev) => !prev);
     }
 
     return (
         <div className="relative mb-8">
-            <label className="text-sm text-slate-800">{ label }</label>
 
-            <div 
+            <label className="block text-sm font-medium text-(--text-primary) mb-2">
+                {label}
+            </label>
+
+            <div
                 className={`
-                    input-box 
-                    ${error 
-                        ? "bg-red-100 border-red-200" 
-                        : "bg-slate-100 border-slate-200"
-                    }
+                    glass input-box
+                    mb-0!
+                    ${error ? "input-box-error" : ""}
                 `}
             >
-                <span className="text-zinc-500">{icon}</span>
-                <input 
-                    type={type === "password" ? showPassword ? "text" : "password" : type} 
-                    placeholder={placeholder} 
-                    value={value} 
+
+                {/* Input Icon */}
+                <span
+                    className={`
+                        shrink-0
+                        transition-colors duration-200
+                        ${error
+                            ? "text-brand-red/70"
+                            : "text-(--text-secondary)"
+                        }
+                    `}
+                >
+                    {icon}
+                </span>
+
+
+                {/* Input */}
+                <input
+                    type={
+                        type === "password"
+                            ? showPassword
+                                ? "text"
+                                : "password"
+                            : type
+                    }
+                    placeholder={placeholder}
+                    value={value}
                     onChange={(e) => onChange(e)}
-                    className="w-full bg-transparent outline-none"
+                    className="
+                        w-full
+                        bg-transparent
+                        outline-none
+                        text-sm
+                        text-(--text-primary)
+                        placeholder:text-(--text-muted)
+                    "
                 />
 
+
+                {/* Password Toggle */}
                 {type === "password" && (
-                    <>
+                    <button
+                        type="button"
+                        onClick={toggleShowPassword}
+                        className="
+                            shrink-0
+                            flex items-center justify-center
+                            text-(--text-muted)
+                            hover:text-(--text-secondary)
+                            transition-colors
+                            cursor-pointer
+                        "
+                        aria-label={
+                            showPassword
+                                ? "Hide password"
+                                : "Show password"
+                        }
+                    >
                         {showPassword ? (
-                            <Eye 
-                                size={20} 
-                                className="text-base-content/40 cursor-pointer" 
-                                onClick={() => toggleShowPassword()}
-                            />
+                            <Eye size={18} />
                         ) : (
-                            <EyeOff 
-                                size={20}
-                                className="text-base-content/40 cursor-pointer" 
-                                onClick={() => toggleShowPassword()}
-                            />
+                            <EyeOff size={18} />
                         )}
-                    </>
+                    </button>
                 )}
+
             </div>
 
-            {error && <div className="absolute -bottom-5 left-5 font-[Basic] tracking-wider text-xs text-red-500">{error}</div>}
+
+            {/* Error */}
+            {error && (
+                <div
+                    className="
+                        absolute
+                        -bottom-5
+                        left-1
+                        font-[Basic]
+                        tracking-wide
+                        text-xs
+                        text-brand-red
+                    "
+                >
+                    {error}
+                </div>
+            )}
+
         </div>
     );
 }

@@ -36,8 +36,8 @@ export default function Signup() {
         try {
             await signup(formData);
             setFormData(data);
-            navigate("/dashboard");
-            toast.success("Welcome to Spendmate!");
+            navigate("/verify-email");
+            toast.success("Verify email to activate account.");
 
         } catch (error) {
             console.error(error.error);
@@ -47,11 +47,16 @@ export default function Signup() {
 
     return (
         <AuthLayout>
-            <div className="lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center">
-                <h3 className="text-2xl font-semibold text-black">Create an Account</h3>
-                <p className="text-sm text-slate-700 mt-[5px] mb-6">
-                    Join us today by entering your details below.
-                </p>
+            <div className="w-full lg:w-[70%] flex flex-col justify-center">
+                {/* Heading */}
+                <div className='mb-7'>
+                    <h3 className="text-2xl md:text-3xl font-[Genos] font-semibold tracking-tight text-(--text-primary)">
+                        Create an Account
+                    </h3>
+                    <p className="text-xs text-(--text-secondary)">
+                        Join us today by entering your details below.
+                    </p>
+                </div>
 
                 <form onSubmit={handleSubmit}>
                     <Input 
@@ -76,15 +81,19 @@ export default function Signup() {
 
                     {/* Password Strength Meter - Only show if password is not empty */}
                     <div
-                        className={`overflow-hidden transition-all duration-300 ease-in-out`}
+                        className="overflow-hidden transition-all duration-300 ease-in-out"
                         style={{
-                            maxHeight: formData.password ? "200px" : "0px", // adjust according to your PasswordStrengthMeter height
+                            maxHeight: formData.password 
+                                ? "200px" 
+                                : "0px", // adjust according to your PasswordStrengthMeter height
                         }}
                     >
                         <div
                             className="transform origin-top transition-transform duration-300 ease-in-out"
                             style={{
-                                transform: formData.password ? "scaleY(1)" : "scaleY(0)",
+                                transform: formData.password 
+                                    ? "scaleY(1)" 
+                                    : "scaleY(0)",
                             }}
                         >
                             <PasswordStrengthMeter password={formData.password} />
@@ -93,17 +102,17 @@ export default function Signup() {
 
                     <button 
                         type="submit"
-                        className="btn-success"
+                        className="auth-btn"
                         disabled={isSigningUp}
                     >
-                        { isSigningUp ? <Loader size={20} className="animate-spin mx-auto" /> : "SIGN UP" }
+                        { isSigningUp ? <Loader size={20} className="animate-spin" /> : "SIGN UP" }
                     </button>
 
-                    <p className="text-[13px] text-slate-800 mt-3">
+                    <p className="text-[13px] mt-4 text-(--txt-secondary) text-center">
                         If Already have an Account?{" "}
                         <Link 
                             to="/login"
-                            className="font-[Basic] font-medium text-primary underline hover:opacity-80 transition-all"
+                            className="font-[Basic] font-medium text-income hover:text-brand-teal transition-colors"
                         >
                             Login
                         </Link>

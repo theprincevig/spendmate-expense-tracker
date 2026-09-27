@@ -11,31 +11,45 @@ const userSchema = new Schema({
         unique: true,
         trim: true
     },
-
     password: {
         type: String,
         required: true
     },
-
     fullName: {
         type: String,
         default: ""
     },
-
     dob: {
         type: Date,
         default: null
     },
-
     profilePic: {
         type: String,
         default: "",
     },
-    
+    gender: {
+        type: String,
+        enum: ["male", "female", "other", null],
+        default: null
+    },
+    phone: {
+        type: String,
+        default: "",
+        trim: true
+    },
     currency: {
         type: String,
         enum: Object.keys(currencyConfig),
         default: "INR"
+    },
+    country: {
+        type: String,
+        trim: true,
+        default: ""
+    },
+    isVerified: {
+        type: Boolean,
+        default: false
     }
 }, { timestamps: true });
 

@@ -1,16 +1,17 @@
-import { 
-    PieChart, 
-    Pie, 
-    Cell, 
-    Tooltip, 
-    ResponsiveContainer, 
-    Legend 
-} from 'recharts';
-import CustomToolTip from './CustomToolTip';
-import CustomLegend from './CustomLegend';
+import {
+    PieChart,
+    Pie,
+    Cell,
+    Tooltip,
+    ResponsiveContainer,
+    Legend,
+} from "recharts";
 
-import { useExchangeRateStore } from '../../store/useExchangeRateStore';
-import { formatPrice } from '../../utils/formatPrice';
+import CustomToolTip from "./CustomToolTip";
+import CustomLegend from "./CustomLegend";
+
+import { useExchangeRateStore } from "../../store/useExchangeRateStore";
+import { formatPrice } from "../../utils/formatPrice";
 
 export default function CustomPieChart({
     data,
@@ -18,7 +19,7 @@ export default function CustomPieChart({
     totalAmount,
     currency,
     colors,
-    showTextAnchor
+    showTextAnchor,
 }) {
     const { rates, isFetchingRates } = useExchangeRateStore();
 
@@ -30,56 +31,68 @@ export default function CustomPieChart({
                     dataKey="amount"
                     nameKey="name"
                     cx="50%"
-                    cy="50%"
-                    outerRadius={130}
-                    innerRadius={100}
+                    cy="45%"
+                    outerRadius={125}
+                    innerRadius={92}
+                    paddingAngle={2}
+                    cornerRadius={4}
                     labelLine={false}
                 >
                     {data.map((entry, index) => (
-                        <Cell 
+                        <Cell
                             key={`cell-${index}`}
                             fill={colors[index % colors.length]}
+                            stroke="none"
                         />
                     ))}
                 </Pie>
-                <Tooltip 
+
+                {/* Tooltip */}
+                <Tooltip
                     content={
                         <CustomToolTip currency={currency} />
-                    } 
+                    }
                 />
-                <Legend content={<CustomLegend />} />
 
+                {/* Legend */}
+                <Legend
+                    content={<CustomLegend />}
+                    verticalAlign="bottom"
+                />
+
+                {/* Center Text */}
                 {showTextAnchor && (
                     <>
                         <text
                             x="50%"
-                            y="50%"
-                            dy={-25}
-                            textAnchor='middle'
-                            fill='#666'
-                            fontSize='14px'
+                            y="45%"
+                            dy={-12}
+                            textAnchor="middle"
+                            fill="#667085"
+                            fontSize="13px"
                         >
                             {label}
                         </text>
+
                         <text
                             x="50%"
-                            y="50%"
-                            dy={8}
-                            textAnchor='middle'
-                            fill='#333'
-                            fontSize='24px'
-                            fontWeight='semi-bold'
+                            y="45%"
+                            dy={20}
+                            textAnchor="middle"
+                            fill="#171A1F"
+                            fontSize="22px"
+                            fontWeight="600"
                         >
                             {isFetchingRates && currency !== "INR" ? (
-                                <span className=" w-40 h-3 shimmer inline-block" />
+                                <tspan>
+                                    Loading...
+                                </tspan>
                             ) : (
-                                <>
-                                    {formatPrice({
-                                        amount: totalAmount,
-                                        userCurrency: currency,
-                                        rates
-                                    })}
-                                </>
+                                formatPrice({
+                                    amount: totalAmount,
+                                    userCurrency: currency,
+                                    rates,
+                                })
                             )}
                         </text>
                     </>

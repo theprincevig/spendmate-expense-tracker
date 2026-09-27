@@ -1,5 +1,5 @@
 import { RefreshCcwIcon, Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 import { useAiChatStore } from "../../store/useAiChatStore";
@@ -15,15 +15,29 @@ export default function AiMessageInput({
     const [spinReset, setSpinReset] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
 
-    // Detect typing
-    useEffect(() => {
-        if (!input) return setIsTyping(false);
+    const typingTimeout = useRef(null);
+
+    const handleChange = (e) => {
+        const nextValue = e.target.value;
+
+        setInput(nextValue);
+
+        if (!nextValue) {
+            setIsTyping(false);
+            return;
+        }
 
         setIsTyping(true);
-        const timeout = setTimeout(() => setIsTyping(false), 1200);
 
-        return () => clearTimeout(timeout);
-    }, [input]);
+        clearTimeout(typingTimeout.current);
+        typingTimeout.current = setTimeout(() => {
+            setIsTyping(false);
+        }, 1200);
+    };
+
+    useEffect(() => {
+        return () => clearTimeout(typingTimeout.current);
+    }, []);
 
     // Reminder for reset chat
     useEffect(() => {
@@ -45,36 +59,60 @@ export default function AiMessageInput({
     }
 
     return (
-        <div className="w-full flex flex-col gap-2 p-4 border-t border-gray-200/70">
+        <div
+            className="
+                w-full p-4 sm:p-5
+                flex flex-col gap-3
+                glass-subtle
+            "
+        >
             <AiQuickActions />
 
-            <div className="w-full flex items-center justify-center gap-2">
-                <input 
+            <div className="w-full flex items-center gap-2">
+                <input
                     type="text"
-                    placeholder={disabled ? "AI is thinking...." : "Ask about your spending...."}
+                    placeholder={
+                        disabled
+                            ? "AI is thinking..."
+                            : "Ask about your spending..."
+                    }
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    className="AI_chat-input"
+                    onChange={handleChange}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            onSend();
+                        }
+                    }}
+                    className="glass AI_chat-input"
                     disabled={disabled}
                 />
+
                 {input ? (
                     <button
+                        type="button"
                         onClick={onSend}
                         className="AI_send-btn"
                         disabled={disabled}
+                        aria-label="Send message"
                     >
                         <Send size={18} />
                     </button>
                 ) : (
                     <button
+                        type="button"
                         onClick={handleReset}
-                        className="AI_send-btn"
+                        className="glass AI_reset-btn"
                         disabled={disabled}
                         title="New Chat"
+                        aria-label="Start new chat"
                     >
-                        <RefreshCcwIcon 
-                            size={18} 
-                            className={spinReset ? "AI_glow-spin" : ""}
+                        <RefreshCcwIcon
+                            size={18}
+                            className={
+                                spinReset
+                                    ? "AI_glow-spin"
+                                    : ""
+                            }
                         />
                     </button>
                 )}

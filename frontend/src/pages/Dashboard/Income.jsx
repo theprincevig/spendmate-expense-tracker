@@ -39,8 +39,7 @@ export default function Income() {
 
     useEffect(() => {
         getIncome();
-        return () => {};
-    }, []);
+    }, [getIncome]);
 
     async function handleAddIncome(e) {
         e.preventDefault();
@@ -53,6 +52,7 @@ export default function Income() {
 
         try {
             await addIncome(incomeFormData);
+            setErrors(data);
             setIncomeFormData(data);
             setOpenAddIncomeModal(false);
             toast.success("Income added successfully!");
@@ -88,19 +88,17 @@ export default function Income() {
 
     return (
         <DashboardLayout activeMenu="Income">
-            <div className="my-5 mx-auto">
+            <div className="w-full max-w-[1500px] mx-auto py-2 md:py-4">
                 {loading ? (
                     <ExpenseNIncomeSkeleton />
                 ) : (
                     <>
                         <div className="grid grid-cols-1 gap-6">
-                            <div className="">
-                                <IncomeOverview 
-                                    currency={activeCurrency.code}
-                                    transactions={incomeData}
-                                    onAddIncome={() => setOpenAddIncomeModal(true)}
-                                />
-                            </div>
+                            <IncomeOverview 
+                                currency={activeCurrency.code}
+                                transactions={incomeData}
+                                onAddIncome={() => setOpenAddIncomeModal(true)}
+                            />
 
                             <IncomeList 
                                 currency={activeCurrency.code}

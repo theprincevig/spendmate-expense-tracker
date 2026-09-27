@@ -1,187 +1,194 @@
-import { create } from 'zustand';
-import { axiosInstance } from '../lib/axios';
-import { API_PATHS } from '../utils/apiPaths';
-import { currencyConfig } from '../config/currency.Config';
+import { create } from "zustand";
+import { axiosInstance } from "../lib/axios";
+import { API_PATHS } from "../utils/apiPaths";
+import { currencyConfig } from "../config/currency.Config";
 
 // helper function for change currency easily
 const normalizeUser = (user) => {
-    if (!user) return null;
+  if (!user) return null;
 
-    return {
-        ...user,
-        currencyDetails: currencyConfig[user.currency] || currencyConfig.INR
-    };
-}
+  return {
+    ...user,
+    currencyDetails: currencyConfig[user.currency] || currencyConfig.INR,
+  };
+};
 
-export const useAuthStore = create((set, get) => ({
-    authUser: null,
+export const useAuthStore = create((set) => ({
+  authUser: null,
 
-    isCheckingAuth: true,
-    isSigningUp: false, // Signup loading state
-    isLoggingIn: false, // Login loading state
-    isUpdatingProfile: false, // Profile update loading state
-    isResettingPassword: false, // Reset password loading state
+  isCheckingAuth: true,
+  isSigningUp: false, // Signup loading state
+  isVerifing: false,
+  isLoggingIn: false, // Login loading state
+  isUpdatingProfile: false, // Profile update loading state
 
-    checkAuth: async () => {
-        set({ isCheckingAuth: true });
-        try {
-            const res = await axiosInstance.get(API_PATHS.AUTH.CHECK_AUTH);
-            const { user } = res.data;
+  checkAuth: async () => {
+    set({ isCheckingAuth: true });
+    try {
+      const res = await axiosInstance.get(API_PATHS.AUTH.CHECK_AUTH);
+      const { user } = res.data;
 
-            set({ authUser: normalizeUser(user) });
-            return user;
+      set({ authUser: normalizeUser(user) });
+      return user;
+    } catch (error) {
+      console.error(`Check Auth error: ${error}`);
+      set({ authUser: null });
+      return null;
+    } finally {
+      set({ isCheckingAuth: false });
+    }
+  },
 
-        } catch (error) {
-            console.error(`Check Auth error: ${error}`);
-            set({ authUser: null });
-            return null;
+  signup: async (data) => {
+    set({ isSigningUp: true });
+    try {
+      const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, data);
+      const { user } = res.data;
 
-        } finally {
-            set({ isCheckingAuth: false });
-        }
-    },
+      if (user) {
+        set({
+          authUser: normalizeUser(user),
+        });
+      }
+      return res.data;
+    } catch (error) {
+      console.error(`Singup error: ${error}`);
+      throw error.response?.data || error;
+    } finally {
+      set({ isSigningUp: false });
+    }
+  },
 
-    signup: async (data) => {
-        set({ isSigningUp: true });
-        try {
-            const res = await axiosInstance.post(API_PATHS.AUTH.REGISTER, data);
-            const { user } = res.data;
+  verifyEmail: async (email, otp) => {
+    set({ isVerifing: true });
+    try {
+      const res = await axiosInstance.post(API_PATHS.AUTH.EMAIL_VERIFY, {
+        email,
+        otp,
+      });
 
-            set({ authUser: normalizeUser(user) });
-            return user;
+      if (res.data?.success) {
+        set((state) => {
+          const updatedUser = { ...state.authUser, isVerified: true };
 
-        } catch (error) {
-            console.error(`Singup error: ${error}`);
-            throw error.response?.data || error;
+          return { authUser: normalizeUser(updatedUser) };
+        });
+      }
+      return res.data;
+    } catch (error) {
+      console.error(`Email verification error: ${error}`);
+      throw error.response?.data || error;
+    } finally {
+      set({ isVerifing: false });
+    }
+  },
 
-        } finally {
-            set({ isSigningUp: false });
-        }
-    },
+  resendVerifyEmail: async (email) => {
+    try {
+      const res = await axiosInstance.post(API_PATHS.AUTH.RESEND_EMAIL_VERIFY, {
+        email,
+      });
+      return res.data;
+    } catch (error) {
+      console.error(`Resend email verification error: ${error}`);
+      throw error.response?.data || error;
+    }
+  },
 
-    login: async (data) => {
-        set({ isLoggingIn: true });
-        try {
-            const res = await axiosInstance.post(API_PATHS.AUTH.LOGIN, data);
-            const { user } = res.data;
+  login: async (data) => {
+    set({ isLoggingIn: true });
+    try {
+      const res = await axiosInstance.post(API_PATHS.AUTH.LOGIN, data);
+      const { user } = res.data;
 
-            set({ authUser: normalizeUser(user) });
-            return user;
+      set({ authUser: normalizeUser(user) });
+      return user;
+    } catch (error) {
+      console.error(`Login error: ${error}`);
+      throw error.response?.data || error;
+    } finally {
+      set({ isLoggingIn: false });
+    }
+  },
 
-        } catch (error) {
-            console.error(`Login error: ${error}`);
-            throw error.response?.data || error;
+  logout: async () => {
+    try {
+      await axiosInstance.delete(API_PATHS.AUTH.LOGOUT);
+      set({ authUser: null });
+    } catch (error) {
+      console.error(`Logout error: ${error}`);
+      throw error.response?.data || error;
+    }
+  },
 
-        } finally {
-            set({ isLoggingIn: false });
-        }
-    },
+  viewProfile: async () => {
+    try {
+      const res = await axiosInstance.get(API_PATHS.PROFILE.ME);
+      const { user } = res.data;
 
-    logout: async () => {
-        try {
-            await axiosInstance.delete(API_PATHS.AUTH.LOGOUT);
-            set({ authUser: null });
+      if (res.data?.user) {
+        set({ authUser: normalizeUser(user) });
+        return user;
+      } else {
+        console.error("Failed to fetch own profile: ", res.data?.error);
+        return null;
+      }
+    } catch (error) {
+      console.error(`View profile error: ${error}`);
+      throw error.response?.data || error;
+    }
+  },
 
-        } catch (error) {
-            console.error(`Logout error: ${error}`);
-            throw error.response?.data || error;
-        }
-    },
+  updateProfile: async (data) => {
+    set({ isUpdatingProfile: true });
+    try {
+      const formData = new FormData();
+      formData.append(
+        "profileData",
+        JSON.stringify({
+          fullName: data.fullName,
+          dob: data.dob,
+          gender: data.gender,
+          phone: data.phone,
+          country: data.country,
+        }),
+      );
+      if (data.profilePic) formData.append("picture", data.profilePic);
 
-    viewProfile: async () => {
-        try {
-            const res = await axiosInstance.get(API_PATHS.PROFILE.ME);
-            const { user } = res.data;
+      const res = await axiosInstance.put(API_PATHS.PROFILE.ME, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
 
-            if (res.data?.user) {
-                set({ authUser: normalizeUser(user) });
-                return user;
+      const { user } = res.data;
 
-            } else {
-                console.error("Failed to fetch own profile: ", res.data?.error);
-                return null;
-            }
-        } catch (error) {
-            console.error(`View profile error: ${error}`);
-            throw error.response?.data || error;
-        }
-    },
+      if (res.data?.user) {
+        set({ authUser: normalizeUser(user) });
+        return user;
+      } else {
+        console.error("No user object returned from server");
+        return null;
+      }
+    } catch (error) {
+      console.error(`Update profile error: ${error}`);
+      throw error.response?.data || error;
+    } finally {
+      set({ isUpdatingProfile: false });
+    }
+  },
 
-    updateProfile: async (data) => {
-        set({ isUpdatingProfile: true });
-        try {
-            const formData = new FormData();
-            formData.append(
-                "profileData",
-                JSON.stringify({
-                    fullName: data.fullName,
-                    dob: data.dob,
-                })
-            );
-            if (data.profilePic) formData.append("picture", data.profilePic);
+  changeCurrency: async (currency) => {
+    try {
+      const res = await axiosInstance.patch(API_PATHS.PROFILE.CHANGE_CURRENCY, {
+        currency,
+      });
 
-            const res = await axiosInstance.put(
-                API_PATHS.PROFILE.ME,
-                formData,
-                { headers: { "Content-Type": "multipart/form-data" } }
-            );
+      const { user } = res.data;
+      set({ authUser: normalizeUser(user) });
 
-            const { user } = res.data;
-
-            if (res.data?.user) {
-                set({ authUser: normalizeUser(user) });
-                return user;
-            } else {
-                console.error("No user object returned from server");
-                return null;
-            }
-
-        } catch (error) {
-            console.error(`Update profile error: ${error}`);
-            throw error.response?.data || error;
-
-        } finally {
-            set({ isUpdatingProfile: false });
-        }
-    },
-
-    changePassword: async ({ oldPassword, newPassword }) => {
-        set({ isResettingPassword: true });
-        try {
-            const res = await axiosInstance.post(
-                API_PATHS.AUTH.CHANGE_PASSWORD,
-                { oldPassword, newPassword }
-            );
-
-            // Force logout
-            await axiosInstance.post(API_PATHS.AUTH.LOGOUT);
-            set({ authUser: null });
-
-            return res.data;
-
-        } catch (error) {
-            console.error(`Reset password error: ${error}`);
-            throw error.response?.data || error;
-
-        } finally {
-            set({ isResettingPassword: false });
-        }
-    },
-
-    changeCurrency: async (currency) => {
-        try {
-            const res = await axiosInstance.patch(
-                API_PATHS.PROFILE.CHANGE_CURRENCY,
-                { currency }
-            );
-
-            const { user } = res.data;
-            set({ authUser: normalizeUser(user) });
-
-            return user;
-        } catch (error) {
-            console.error(`Change currency error: ${error}`);
-            throw error.response?.data || error;
-        }
-    },
+      return user;
+    } catch (error) {
+      console.error(`Change currency error: ${error}`);
+      throw error.response?.data || error;
+    }
+  },
 }));

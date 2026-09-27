@@ -22,13 +22,18 @@ export default function AddIncomeForm({
     };
 
     return (
-        <div>
+        <>
             <EmojiPickerPopup 
                 icon={data.icon}
                 onSelected={(selectedIcon) => {
-                    setData(prev => ({
+                    setData((prev) => ({
                         ...prev,
                         icon: selectedIcon
+                    }));
+
+                    setErrors((prev) => ({
+                        ...prev,
+                        icon: ""
                     }));
                 }}
             />
@@ -64,11 +69,11 @@ export default function AddIncomeForm({
                 <button
                     type="button"
                     onClick={onAddIncome}
-                    className="add-btn hover:add-btn-fill"
+                    className="income-btn"
                 >
                     Add <Plus size={14} />
                 </button>
             </div>
-        </div>
+        </>
     );
 }

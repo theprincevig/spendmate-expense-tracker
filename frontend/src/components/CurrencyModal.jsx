@@ -1,5 +1,5 @@
-import { X } from "lucide-react";
-import { createPortal } from 'react-dom';
+import { Check, X } from "lucide-react";
+import { createPortal } from "react-dom";
 import { useEffect, useState } from "react";
 
 import { useActiveCurrency } from "../hooks/useActiveCurrency";
@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 
 export default function CurrencyModal({ isOpen, onClose }) {
     const [showModal, setShowModal] = useState(isOpen);
+
     const currencies = Object.values(currencyConfig);
 
     const { authUser, changeCurrency } = useAuthStore();
@@ -16,14 +17,16 @@ export default function CurrencyModal({ isOpen, onClose }) {
 
     useEffect(() => {
         if (isOpen) {
-            setShowModal(true);
-        } else {
-            const timer = setTimeout(() => {
-                setShowModal(false);
-            }, 300);
-
-            return () => clearTimeout(timer);
+            const frame = requestAnimationFrame(
+                () => setShowModal(true)
+            );
+            return () => cancelAnimationFrame(frame);
         }
+
+        const timer = setTimeout(
+            () => setShowModal(false),
+        300);
+        return () => clearTimeout(timer);
     }, [isOpen]);
 
     if (!showModal) return null;
@@ -31,11 +34,16 @@ export default function CurrencyModal({ isOpen, onClose }) {
     const handleCurrencyChange = async (currencyCode) => {
         if (!authUser) return;
 
+        if (currencyCode === activeCurrency.code) {
+            onClose();
+            return;
+        }
+
         try {
             await changeCurrency(currencyCode);
+
             toast.success(`Currency changed to ${currencyCode}`);
             onClose();
-
         } catch (error) {
             console.error(error.error);
             toast.error(error.error || "Failed to change currency");
@@ -43,57 +51,160 @@ export default function CurrencyModal({ isOpen, onClose }) {
     };
 
     return createPortal(
-        <div 
+        <div
+            role="presentation"
             onClick={onClose}
             className={`
-                fixed inset-0 flex justify-center items-center 
-                bg-black/30 z-2000 px-3
+                fixed inset-0 z-2000
+                flex items-center justify-center
+                px-3 sm:px-5 
+                bg-(--text-primary)/35
                 transition-opacity duration-300
                 ${isOpen ? "opacity-100" : "opacity-0"}
             `}
         >
-            <div 
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-labelledby="currency-modal-title"
                 onClick={(e) => e.stopPropagation()}
                 className={`
-                    relative w-full max-w-2xl bg-white 
-                    flex flex-col rounded-4xl shadow-xl px-6 py-4  
+                    glass-strong
+                    relative w-full 
+                    max-w-2xl max-h-[85vh]
+                    flex flex-col rounded-2xl
+                    p-5 sm:p-6 overflow-hidden
                     ${isOpen ? "open" : "close"}
                 `}
             >
-                <div className="flex items-center justify-between mb-3">
-                    <h3 className="text-xl">Currency</h3>
-                    <button 
+                {/* Header */}
+                <div className="flex items-center justify-between gap-4">
+                    <div>
+                        <h3
+                            id="currency-modal-title"
+                            className="text-lg sm:text-xl font-semibold text-(--text-primary)"
+                        >
+                            Currency
+                        </h3>
+
+                        <p className="
+                            text-xs sm:text-sm 
+                            font-[Basic] text-(--text-secondary) 
+                            tracking-wider
+                        ">
+                            Choose the currency used across your account.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
                         onClick={onClose}
-                        className="rounded-full p-1 hover:bg-zinc-100 transition-all duration-200 cursor-pointer"
+                        aria-label="Close currency modal"
+                        className="close-btn shrink-0"
                     >
                         <X size={20} />
                     </button>
                 </div>
 
-                <div className="border-t border-zinc-200 mb-6" />
+                {/* Divider */}
+                <div className="h-px bg-[rgba(102,112,133,0.15)] my-5" />
 
-                <div className="max-h-[50vh] grid grid-cols-2 md:grid-cols-3 gap-3 overflow-y-auto pr-1">
-                    {currencies.map((currency) => {
-                        const isActive = activeCurrency.code === currency.code;
+                {/* Currency List */}
+                <div
+                    className="
+                        max-h-[55vh]
+                        overflow-y-auto
+                        pr-1
+                        scrollbar-thin
+                    "
+                >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                        {currencies.map((currency) => {
+                            const isActive =
+                                activeCurrency.code === currency.code;
 
-                        return (
-                            <button
-                                key={currency.code}
-                                onClick={() => handleCurrencyChange(currency.code)}
-                                className={`
-                                    rounded-2xl px-4 py-2 text-left transition-all duration-200 cursor-pointer 
-                                    ${isActive ? "border border-black" : "hover:bg-zinc-100"}
-                                `}
-                            >
-                                <div className="flex flex-col">
-                                    <h4 className="text-sm sm:text-base font-semibold">{currency.name}</h4>
-                                    <p className="text-xs sm:text-sm text-zinc-700">
-                                        {currency.code}-{currency.symbol}
-                                    </p>
-                                </div>
-                            </button>
-                        );
-                    })}
+                            return (
+                                <button
+                                    key={currency.code}
+                                    type="button"
+                                    onClick={() =>
+                                        handleCurrencyChange(currency.code)
+                                    }
+                                    aria-pressed={isActive}
+                                    className={`
+                                        group relative 
+                                        w-full text-left 
+                                        rounded-xl px-4 py-3
+                                        border cursor-pointer
+                                        transition-all duration-200
+
+                                        ${
+                                            isActive
+                                                ? `
+                                                    bg-brand-teal/5
+                                                    border-brand-teal/50
+                                                    shadow-[0_5px_18px_var(--shadow-teal-soft)]
+                                                `
+                                                : `
+                                                    bg-[rgba(255,255,255,0.25)]
+                                                    border-[rgba(255,255,255,0.55)]
+                                                    hover:bg-brand-red/10
+                                                    hover:border-brand-red/50
+                                                    hover:-translate-y-0.5
+                                                    hover:shadow-[0_5px_18px_var(--shadow-expense-soft)]
+                                                `
+                                        }
+                                    `}
+                                >
+                                    <div className="flex items-center justify-between gap-3">
+                                        <div className="min-w-0">
+                                            <h4
+                                                className={`
+                                                    text-sm sm:text-base
+                                                    font-semibold
+                                                    truncate
+                                                    transition-colors duration-200
+                                                    ${
+                                                        isActive
+                                                            ? "text-brand-teal"
+                                                            : "text-(--text-primary)"
+                                                    }
+                                                `}
+                                            >
+                                                {currency.name}
+                                            </h4>
+
+                                            <p
+                                                className="
+                                                    text-xs sm:text-sm
+                                                    text-(--text-secondary)
+                                                    font-[Basic] mt-0.5
+                                                "
+                                            >
+                                                {currency.code} ·{" "}
+                                                {currency.symbol}
+                                            </p>
+                                        </div>
+
+                                        {/* Active Indicator */}
+                                        {isActive && (
+                                            <span
+                                                className="
+                                                    shrink-0 w-6 h-6
+                                                    flex items-center justify-center
+                                                    rounded-full text-white
+                                                    bg-brand-teal
+                                                    shadow-[0_4px_12px_var(--shadow-teal)]
+                                                "
+                                            >
+                                                <Check size={14} strokeWidth={2.5} />
+                                            </span>
+                                        )}
+                                    </div>
+                                </button>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
         </div>,

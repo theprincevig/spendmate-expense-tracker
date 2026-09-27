@@ -1,5 +1,12 @@
 import { useNavigate } from "react-router-dom";
-import { Brain, ChevronDown, ChevronUp, KeyRound } from "lucide-react";
+import {
+    Brain,
+    ChevronDown,
+    ChevronUp,
+    Globe,
+    KeyRound,
+    Settings
+} from "lucide-react";
 import { useState } from "react";
 
 import { useActiveCurrency } from "../hooks/useActiveCurrency";
@@ -14,68 +21,109 @@ export default function AdvanceSettings() {
     const activeCurrency = useActiveCurrency();
     const navigate = useNavigate();
 
+    const currencyCode = activeCurrency?.code || "USD";
+    const currencySymbol = activeCurrency?.details?.symbol || "$";
+
     return (
         <div className="relative">
-            <div className="bg-white border-t-gray-200/80 shadow-md px-4 py-2">
-                {/* Header */}
-                <button 
-                    onClick={() => setOpen(prev => !prev)}
-                    className="w-full flex items-center justify-between p-2"
+            <div className="glass card p-4 md:p-5">
+                <button
+                    type="button"
+                    onClick={() => setOpen((prev) => !prev)}
+                    className="w-full flex items-center justify-between gap-3 rounded-2xl text-left"
                 >
-                    <h1 className="text-sm sm:text-lg font-medium">Advance Settings</h1>
-                    {!open ? (
-                        <ChevronDown size={18} />
-                    ) : (
-                        <ChevronUp size={18} />
-                    )}
+                    <div className="flex items-center gap-3">
+                        <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-teal/8 text-brand-teal">
+                            <Settings size={18} />
+                        </span>
+
+                        <div>
+                            <p className="text-[10px] font-medium uppercase tracking-wide text-(--text-muted)">
+                                Security
+                            </p>
+                            <h1 className="text-lg sm:text-xl font-[Genos] font-semibold text-(--text-primary)">
+                                Advance settings
+                            </h1>
+                        </div>
+                    </div>
+
+                    <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-(--text-secondary)">
+                        {!open 
+                            ? <ChevronDown size={18} /> 
+                            : <ChevronUp size={18} />
+                        }
+                    </span>
                 </button>
 
-                {/* Content */}
                 {open && (
-                    <div className="h-50 space-y-3 mt-6">
-                        {/* AI chat history */}
-                        <button 
+                    <div className="mt-8 space-y-3">
+                        <button
+                            type="button"
                             onClick={() => setShowHistory(true)}
-                            className="w-full flex items-center gap-2 px-2 py-3 hover:bg-zinc-100 cursor-pointer"
+                            className="glass card-btn w-full flex items-center justify-between gap-3 text-left"
                         >
-                            <h3 className="text-xs sm:text-sm">AI Chat History</h3>
-                            <Brain size={13} />
+                            <div className="flex items-center gap-3">
+                                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-teal/8 text-brand-teal">
+                                    <Brain size={16} />
+                                </span>
+
+                                <span className="text-sm sm:text-base font-[Basic] tracking-wider text-(--text-primary)">
+                                    AI chat history
+                                </span>
+                            </div>
                         </button>
-                        
-                        {/* Change Password */}
-                        <div className="w-full flex items-center justify-between p-2 hover:bg-zinc-100">
-                            <h3 className="text-xs sm:text-sm">Change Password</h3>
-                            <button 
-                                onClick={() => navigate("/change-password")}
-                                className="card-btn"
+
+                        <button
+                            type="button"
+                            onClick={() => setShowCurrencies(true)}
+                            className="glass card-btn w-full flex items-center justify-between gap-3 text-left"
+                        >
+                            <div className="flex items-center gap-3">
+                                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-teal/8 text-brand-teal">
+                                    <Globe size={16} />
+                                </span>
+
+                                <span className="text-sm sm:text-base font-[Basic] tracking-wider text-(--text-primary)">
+                                    Currency changer
+                                </span>
+                            </div>
+
+                            <span className="text-sm font-semibold text-brand-teal">
+                                {currencySymbol} {currencyCode}
+                            </span>
+                        </button>
+
+                        <div className="glass card-btn w-full flex items-center justify-between gap-3 rounded-2xl p-3">
+                            <div className="flex items-center gap-3">
+                                <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-teal/8 text-brand-teal">
+                                    <KeyRound size={16} />
+                                </span>
+
+                                <span className="text-sm sm:text-base font-[Basic] tracking-wider text-(--text-primary)">
+                                    Change password
+                                </span>
+                            </div>
+
+                            <button
+                                type="button"
+                                onClick={() => navigate("/password/change")}
+                                className="auth-btn w-full max-w-[100px]"
                             >
-                                Change <KeyRound size={12} />
+                                Change
                             </button>
                         </div>
-
-                        {/* Currency Changer */}
-                        <button 
-                            onClick={() => setShowCurrencies(true)}
-                            className="w-full flex items-center justify-between p-2 hover:bg-zinc-100 cursor-pointer"
-                        >
-                            <h3 className="text-xs sm:text-sm">Currency Changer</h3>
-                            <p className="text-sm font-semibold text-zinc-600">
-                                {activeCurrency.details.symbol}
-                                {" "}
-                                {activeCurrency.code}
-                            </p>
-                        </button>
                     </div>
                 )}
             </div>
 
-            {showHistory && (
-                <AiChatHistory onClose={() => setShowHistory(false)} />
-            )}
+            <AiChatHistory
+                isOpen={showHistory}
+                onClose={() => setShowHistory(false)}
+            />
 
-            <CurrencyModal 
+            <CurrencyModal
                 isOpen={showCurrencies}
-                onClose={() => setShowCurrencies(false)} 
+                onClose={() => setShowCurrencies(false)}
             />
         </div>
     );

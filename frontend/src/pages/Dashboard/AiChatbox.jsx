@@ -29,7 +29,7 @@ export default function AiChatbox() {
         };
 
         init();
-    }, [activeChatId, newChat]);
+    }, [activeChatId, newChat, loadChatSession]);
 
     function handleSend() {
         if (!input.trim() || aiTyping || aiUnavailable) return;
@@ -43,9 +43,12 @@ export default function AiChatbox() {
             {initialLoading ? (
                 <AiChatboxSkeleton />
             ) : (
-                <div className="h-full flex flex-col">
+                <div className="h-full flex flex-col bg-white/20">
                     {/* Message content */}
-                    <AiChatBody messages={messages} loading={aiTyping} />
+                    <AiChatBody 
+                        messages={messages}
+                        loading={aiTyping} 
+                    />
 
                     {/* Message input */}
                     <AiMessageInput 

@@ -4,7 +4,6 @@ import { CreditCard, HandCoins, WalletMinimal } from "lucide-react";
 
 import { useDashboardStore } from "../../store/useDashboardStore";
 import { useActiveCurrency } from "../../hooks/useActiveCurrency";
-import { COLORS } from "../../theme/color";
 
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import InfoCard from "../../components/cards/InfoCard";
@@ -24,42 +23,42 @@ export default function Home() {
 
     useEffect(() => {
         getDashboardData();
-    }, []);
+    }, [getDashboardData]);
 
     if (!activeCurrency) return null; // safety (auth not loaded yet)
 
     return (
         <DashboardLayout activeMenu="Dashboard">
-            <div className="my-5 mx-auto">
+            <div className="w-full max-w-[1500px] mx-auto py-2 md:py-4">
                 {loading ? (
                     <DashboardSkeleton />
                 ) : (
                     <>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 md:gap-6">
                             <InfoCard
                                 icon={<CreditCard />}
                                 label="Total Balance"
                                 value={dashboardData?.totalBalance || 0}
                                 currency={activeCurrency.code}
-                                color={COLORS.WARM_GREENISH_YELLOW}
+                                color="balance"
                             />
                             <InfoCard
                                 icon={<WalletMinimal />}
                                 label="Total Income"
                                 value={dashboardData?.totalIncome || 0}
                                 currency={activeCurrency.code}
-                                color={COLORS.PRIMARY_MAGENTA}
+                                color="income"
                             />
                             <InfoCard
                                 icon={<HandCoins />}
                                 label="Total Expense"
                                 value={dashboardData?.totalExpense || 0}
                                 currency={activeCurrency.code}
-                                color={COLORS.DEEP_LAVENDER}
+                                color="expense"
                             />
                         </div>
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                        <div className="grid grid-cols-1 xl:grid-cols-2 gap-4 md:gap-6 mt-4 md:mt-6">
                             <RecentTransactions 
                                 transactions={dashboardData?.recentTransactions}
                                 onSeeMore={() => navigate("/expense")}
