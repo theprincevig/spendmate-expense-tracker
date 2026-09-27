@@ -8,6 +8,8 @@ const {
   generateOtp,
   saveOtp,
   verifyOtp,
+  checkOtpSendLimit,
+  recordOtpSend,
 } = require("../services/otp.service.js");
 
 // jest.mock(path, factory) swaps out a REAL module for a fake one, but only
