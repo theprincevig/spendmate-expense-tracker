@@ -17,14 +17,16 @@ export default function CurrencyModal({ isOpen, onClose }) {
 
     useEffect(() => {
         if (isOpen) {
-            setShowModal(true);
-        } else {
-            const timer = setTimeout(() => {
-                setShowModal(false);
-            }, 300);
-
-            return () => clearTimeout(timer);
+            const frame = requestAnimationFrame(
+                () => setShowModal(true)
+            );
+            return () => cancelAnimationFrame(frame);
         }
+
+        const timer = setTimeout(
+            () => setShowModal(false),
+        300);
+        return () => clearTimeout(timer);
     }, [isOpen]);
 
     if (!showModal) return null;

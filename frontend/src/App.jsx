@@ -32,7 +32,7 @@ function App() {
   useEffect(() => {
     checkAuth();
     fetchRates();
-  }, []);
+  }, [checkAuth, fetchRates]);
 
   return (
       <div>

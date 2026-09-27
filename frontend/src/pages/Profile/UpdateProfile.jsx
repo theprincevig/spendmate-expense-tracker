@@ -9,7 +9,6 @@ import { hasErrors } from "../../errors/errors";
 
 import DashboardLayout from "../../components/layouts/DashboardLayout";
 import Input from "../../components/inputs/Input";
-// import CharAvatar from "../../components/cards/CharAvatar";
 import UpdateProfileSkeleton from "../../components/skeletons/UpdateProfileSkeleton";
 import AvatarCard from "../../components/cards/AvatarCard";
 import RadioGroup from "../../components/inputs/RadioGroup";
@@ -25,36 +24,23 @@ export default function UpdateProfile() {
         country: ""
     };
 
-    const [profileData, setProfileData] = useState(emptyProfile);
-    const [changedData, setChangedData] = useState(emptyProfile);
+    const buildProfileData = (user) => ({
+        fullName: user?.fullName || "",
+        dob: user?.dob ? new Date(user.dob).toISOString().split("T")[0] : "",
+        phone: user?.phone || "",
+        gender: user?.gender || "",
+        country: user?.country || ""
+    });
+
+    const [profileData, setProfileData] = useState(() => buildProfileData(authUser));
+    const [changedData, setChangedData] = useState(() => buildProfileData(authUser));
     const [errors, setErrors] = useState(emptyProfile);
-    
+
     const [profilePic, setProfilePic] = useState(null);
-    const [preview, setPreview] = useState("");
+    const [preview, setPreview] = useState(authUser?.profilePic || "");
     const [profilePicRemoved, setProfilePicRemoved] = useState(false);
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if (!authUser) return;
-
-        const loadedData = {
-            fullName: authUser.fullName || "",
-            dob: authUser.dob
-                ? new Date(authUser.dob).toISOString().split("T")[0]
-                : "",
-            phone: authUser.phone,
-            gender: authUser.gender,
-            country: authUser.country
-        };
-
-        setProfileData(loadedData);
-        setChangedData(loadedData);
-
-        if (authUser.profilePic) {
-            setPreview(authUser.profilePic);
-        }
-    }, [authUser]);
-    
     useEffect(() => {
         return () => {
             if (preview) {

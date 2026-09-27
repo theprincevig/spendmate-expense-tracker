@@ -23,7 +23,7 @@ export default function Home() {
 
     useEffect(() => {
         getDashboardData();
-    }, []);
+    }, [getDashboardData]);
 
     if (!activeCurrency) return null; // safety (auth not loaded yet)
 

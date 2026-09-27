@@ -1,17 +1,12 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { prepareExpenseBarChartData } from "../../lib/helper";
 import CustomBarChart from "../charts/CustomBarChart";
 
 
 export default function Last30DaysExpenses({ data, currency }) {
-    const [chartData, setChartData] = useState([]);
-
-    useEffect(() => {
-        const result = prepareExpenseBarChartData(data);
-        setChartData(result);
-
-        return () => {}
-    }, [data]);
+    const chartData = useMemo(() => 
+        prepareExpenseBarChartData(data),
+    [data]);
 
     if (!currency) return null;
 

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { prepareIncomeBarChartData } from "../../lib/helper";
 import { Plus } from "lucide-react";
 import CustomBarChart from "../charts/CustomBarChart";
@@ -8,14 +8,9 @@ export default function IncomeOverview({
     transactions,
     onAddIncome
 }) {
-    const [chartData, setChartData] = useState([]);
-
-    useEffect(() => {
-        const result = prepareIncomeBarChartData(transactions);
-        // console.log("ChartData:", prepareIncomeBarChartData(transactions));
-        setChartData(result);
-
-    }, [transactions]);
+    const chartData = useMemo(() => 
+        prepareIncomeBarChartData(transactions),
+    [transactions]);
 
     if (!currency) return null;
 

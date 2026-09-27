@@ -1,4 +1,5 @@
 import { Lock } from "lucide-react";
+import { useState } from "react";
 
 /* ==================================================
    Mock Field
@@ -7,6 +8,10 @@ import { Lock } from "lucide-react";
    ================================================== */
 
 export const MockField = ({ field }) => {
+    const [otpValues] = useState(() =>
+        Array.from({ length: 4 }, () => Math.floor(Math.random() * 9) + 1)
+    );
+
     return (
         <div className="glass rounded-xl px-3 py-2.5">
             <p className="text-[10px] text-(--text-secondary) mb-1">
@@ -28,7 +33,7 @@ export const MockField = ({ field }) => {
                                 ${i < 4 ? "glass-strong" : "glass"}
                             `}
                         >
-                            {i < 4 ? Math.floor(Math.random() * 9) + 1 : ""}
+                            {i < 4 ? otpValues[i] : ""}
                         </div>
                     ))}
                 </div>

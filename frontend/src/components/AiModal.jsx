@@ -8,18 +8,19 @@ export default function AiModal({
     chatboxTitle
 }) {
     const [showModal, setShowModal] = useState(chatboxOpen);
-    
-    // Handle mount/unmount animation
+
     useEffect(() => {
         if (chatboxOpen) {
-            setShowModal(true);
-        } else {
-            const timer = setTimeout(() => {
-                setShowModal(false);
-            }, 300);
-
-            return () => clearTimeout(timer);
+            const frame = requestAnimationFrame(
+                () => setShowModal(true)
+            );
+            return () => cancelAnimationFrame(frame);
         }
+
+        const timer = setTimeout(
+            () => setShowModal(false),
+        300);
+        return () => clearTimeout(timer);
     }, [chatboxOpen]);
 
     useEffect(() => {
@@ -29,7 +30,7 @@ export default function AiModal({
 
         document.addEventListener("keydown", handleEsc);
         return () => document.removeEventListener("keydown", handleEsc);
-    }, []);
+    }, [chatboxClose]);
 
     if (!showModal) return null;
 

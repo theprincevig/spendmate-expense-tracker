@@ -39,7 +39,7 @@ export default function Income() {
 
     useEffect(() => {
         getIncome();
-    }, []);
+    }, [getIncome]);
 
     async function handleAddIncome(e) {
         e.preventDefault();

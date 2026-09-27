@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import { prepareExpenseLineChartData } from "../../lib/helper";
 import { Plus } from "lucide-react";
 import CustomLineChart from "../charts/CustomLineChart";
@@ -8,15 +8,10 @@ export default function ExpenseOverview({
     transactions,
     onAddExpense
 }) {
-    const [chartData, setChartData] = useState([]);
+    const chartData = useMemo(() => 
+        prepareExpenseLineChartData(transactions),
+    [transactions]);
     
-    useEffect(() => {
-        const result = prepareExpenseLineChartData(transactions);
-        // console.log("ChartData:", prepareExpenseLineChartData(transactions));
-        setChartData(result);
-
-    }, [transactions]);
-
     if (!currency) return null;
 
     return (

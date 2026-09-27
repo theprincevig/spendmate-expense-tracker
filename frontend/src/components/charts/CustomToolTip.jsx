@@ -2,10 +2,11 @@ import { useExchangeRateStore } from "../../store/useExchangeRateStore";
 import { formatPrice } from "../../utils/formatPrice";
 
 export default function CustomToolTip({ active, payload, currency }) {
+    const { rates, isFetchingRates } = useExchangeRateStore();
+    
     if (!active || !payload || !payload.length) return null;
 
     const { name, value } = payload[0];
-    const { rates, isFetchingRates } = useExchangeRateStore();
 
     return (
         <div className="

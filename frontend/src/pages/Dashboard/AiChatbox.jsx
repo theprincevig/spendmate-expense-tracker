@@ -29,7 +29,7 @@ export default function AiChatbox() {
         };
 
         init();
-    }, [activeChatId, newChat]);
+    }, [activeChatId, newChat, loadChatSession]);
 
     function handleSend() {
         if (!input.trim() || aiTyping || aiUnavailable) return;

@@ -1,24 +1,16 @@
-import { useEffect, useState } from "react";
+import { useMemo } from "react";
 import CustomPieChart from "../charts/CustomPieChart";
 import { COLOR_ARRAY } from "../../theme/theme";
 
 export default function RecentIncomeWithChart({ currency, data, totalIncome }) {
-    const [chartData, setChartData] = useState([]);
-
-    function prepareChartData() {
-        const dataArr = data?.map((item) => ({
-            name: item?.source,
-            amount: item?.amount
-        }));
-
-        setChartData(dataArr);
-    }
-
-    useEffect(() => {
-        prepareChartData();
-
-        return () => {}
-    }, [data]);
+    const chartData = useMemo(
+        () =>
+            data?.map((item) => ({
+                name: item?.source,
+                amount: item?.amount
+            })),
+        [data]
+    );
 
     if (!currency) return null;
 

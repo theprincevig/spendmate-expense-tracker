@@ -46,7 +46,7 @@ export default function Expense() {
     useEffect(() => {
         getExpense();
         return () => {};
-    }, []);
+    }, [getExpense]);
 
     async function handleAddExpense(e) {
         e.preventDefault();

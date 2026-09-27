@@ -10,43 +10,43 @@ import {
 import { useExchangeRateStore } from '../../store/useExchangeRateStore';
 import { formatPrice } from '../../utils/formatPrice';
 
-export default function CustomLineChart({ data, currency }) {
+function CustomTooltip({ active, payload, currency, rates, isFetchingRates }) {
+    if (!active || !payload || !payload.length) return null;
+
+    const { category, amount } = payload[0].payload;
+
     if (!currency) return null;
 
-    const { rates, isFetchingRates } = useExchangeRateStore();
-
-    function CustomTooltip({ active, payload }) {
-        if (!active || !payload || !payload.length) return null;
-
-        const { category, amount } = payload[0].payload;
-    
-        return (
-            <div className="
-                glass-subtle
-                min-w-[180px] rounded-xl p-3
-            ">
-                <p className="text-xs font-semibold text-(--text-primary) mb-1.5">
-                    {category}
-                </p>
-                <span className="text-sm text-(--text-secondary)">
-                    Amount:{" "}
-                    <span className="text-sm font-medium text-(--text-primary)">
-                        {isFetchingRates && currency !== "INR" ? (
-                            <span className="w-24 h-3 shimmer inline-block rounded-full" />
-                        ) : (
-                            <>
-                                {formatPrice({
-                                    amount,
-                                    userCurrency: currency,
-                                    rates
-                                })}
-                            </>
-                        )}
-                    </span>
+    return (
+        <div className="
+            glass-subtle
+            min-w-[180px] rounded-xl p-3
+        ">
+            <p className="text-xs font-semibold text-(--text-primary) mb-1.5">
+                {category}
+            </p>
+            <span className="text-sm text-(--text-secondary)">
+                Amount:{" "}
+                <span className="text-sm font-medium text-(--text-primary)">
+                    {isFetchingRates && currency !== "INR" ? (
+                        <span className="w-24 h-3 shimmer inline-block rounded-full" />
+                    ) : (
+                        <>
+                            {formatPrice({
+                                amount,
+                                userCurrency: currency,
+                                rates
+                            })}
+                        </>
+                    )}
                 </span>
-            </div>
-        );
-    }
+            </span>
+        </div>
+    );
+}
+
+export default function CustomLineChart({ data, currency }) {
+    const { rates, isFetchingRates } = useExchangeRateStore();
 
     return (
         <div className="mt-6">
@@ -103,7 +103,14 @@ export default function CustomLineChart({ data, currency }) {
                     />
 
                     <Tooltip
-                        content={<CustomTooltip />}
+                        content={(props) => (
+                            <CustomTooltip
+                                {...props}
+                                currency={currency}
+                                rates={rates}
+                                isFetchingRates={isFetchingRates}
+                            />
+                        )}
                         cursor={{
                             stroke: "var(--expense)",
                             strokeOpacity: 0.15

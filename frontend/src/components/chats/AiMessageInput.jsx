@@ -1,5 +1,5 @@
 import { RefreshCcwIcon, Send } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 
 import { useAiChatStore } from "../../store/useAiChatStore";
@@ -15,15 +15,29 @@ export default function AiMessageInput({
     const [spinReset, setSpinReset] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
 
-    // Detect typing
-    useEffect(() => {
-        if (!input) return setIsTyping(false);
+    const typingTimeout = useRef(null);
+
+    const handleChange = (e) => {
+        const nextValue = e.target.value;
+
+        setInput(nextValue);
+
+        if (!nextValue) {
+            setIsTyping(false);
+            return;
+        }
 
         setIsTyping(true);
-        const timeout = setTimeout(() => setIsTyping(false), 1200);
 
-        return () => clearTimeout(timeout);
-    }, [input]);
+        clearTimeout(typingTimeout.current);
+        typingTimeout.current = setTimeout(() => {
+            setIsTyping(false);
+        }, 1200);
+    };
+
+    useEffect(() => {
+        return () => clearTimeout(typingTimeout.current);
+    }, []);
 
     // Reminder for reset chat
     useEffect(() => {
@@ -63,7 +77,7 @@ export default function AiMessageInput({
                             : "Ask about your spending..."
                     }
                     value={input}
-                    onChange={(e) => setInput(e.target.value)}
+                    onChange={handleChange}
                     onKeyDown={(e) => {
                         if (e.key === "Enter") {
                             onSend();
