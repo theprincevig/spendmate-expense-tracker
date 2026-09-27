@@ -1,6 +1,6 @@
 // Adjust these require paths if your folder layout differs.
 // Assumes: backend/controllers/password.controller.js, backend/tests/password.controller.test.js
-const passwordController = require("../controllers/password.controller.js");
+const passwordController = require("../controller/password.controller.js");
 const User = require("../models/user.js");
 const {
   sendPasswordResetEmail,

@@ -1,6 +1,6 @@
 // Adjust these require paths if your folder layout differs.
 // Assumes: backend/controllers/profile.controller.js, backend/tests/profile.controller.test.js
-const profileController = require("../controllers/profile.controller.js");
+const profileController = require("../controller/profile.controller.js");
 const User = require("../models/user");
 
 // jest.mock(path, factory) swaps the REAL User model for a fake one, only
@@ -141,11 +141,9 @@ describe("updateProfile", () => {
     // the document to update, then again (with .select) to return a clean
     // copy afterwards. mockReturnValueOnce lets us give two different fake
     // answers for those two calls, in order.
-    User.findById
-      .mockReturnValueOnce(user)
-      .mockReturnValueOnce({
-        select: jest.fn().mockResolvedValue(updatedUser),
-      });
+    User.findById.mockReturnValueOnce(user).mockReturnValueOnce({
+      select: jest.fn().mockResolvedValue(updatedUser),
+    });
 
     await profileController.updateProfile(req, res);
 
@@ -192,11 +190,9 @@ describe("updateProfile", () => {
       email: "jane@a.com",
       save: jest.fn().mockResolvedValue(),
     };
-    User.findById
-      .mockReturnValueOnce(user)
-      .mockReturnValueOnce({
-        select: jest.fn().mockResolvedValue({ currency: "USD" }),
-      });
+    User.findById.mockReturnValueOnce(user).mockReturnValueOnce({
+      select: jest.fn().mockResolvedValue({ currency: "USD" }),
+    });
 
     await profileController.updateProfile(req, res);
 

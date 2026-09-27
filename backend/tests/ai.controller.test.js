@@ -1,6 +1,6 @@
 // Adjust these require paths if your folder layout differs.
 // Assumes: backend/controllers/ai.controller.js, backend/tests/ai.controller.test.js
-const aiController = require("../controllers/ai.controller.js");
+const aiController = require("../controller/ai.controller.js");
 const Expense = require("../models/expense");
 const AiChat = require("../models/aiChat.js");
 const AiChatSession = require("../models/aiChatSession.js");

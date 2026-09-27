@@ -1,6 +1,6 @@
 // Adjust these require paths if your folder layout differs.
 // Assumes: backend/controllers/expense.controller.js, backend/tests/expense.controller.test.js
-const expenseController = require("../controllers/expense.controller.js");
+const expenseController = require("../controller/expense.controller.js");
 const Expense = require("../models/expense.js");
 
 // jest.mock(path, factory) swaps the REAL Expense model for a fake one, only

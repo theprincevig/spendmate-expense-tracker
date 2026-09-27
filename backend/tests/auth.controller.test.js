@@ -1,6 +1,6 @@
 // Adjust these require paths if your folder layout differs.
 // Assumes: backend/controllers/auth.controller.js, backend/tests/auth.controller.test.js
-const authController = require("../controllers/auth.controller.js");
+const authController = require("../controller/auth.controller.js");
 const User = require("../models/user.js");
 const { generateTokenAndCookie } = require("../utils/generateToken.js");
 const { sendOtpEmail } = require("../services/email.service.js");
