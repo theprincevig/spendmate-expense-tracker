@@ -1,6 +1,6 @@
 {
   "name": "spendmate-backend",
-  "version": "1.1.1",
+  "version": "2.0.0",
   "description": "SpendMate Backend API - Expense Tracker",
   "main": "server.js",
   "type": "commonjs",
