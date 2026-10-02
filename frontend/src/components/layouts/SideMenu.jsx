@@ -121,7 +121,7 @@ export default function SideMenu({ activeMenu }) {
                                     transition-colors duration-200
                                     ${
                                         isActive
-                                            ? "text-(--income)"
+                                            ? "text-income"
                                             : `
                                                 text-(--text-muted)
                                                 group-hover:text-income

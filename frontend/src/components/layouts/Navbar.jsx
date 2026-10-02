@@ -28,7 +28,7 @@ export default function Navbar({ activeMenu }) {
                     w-10 h-10
                     rounded-full
                     flex items-center justify-center
-                    text-primary
+                    text-(--text-primary)
                     hover:text-brand-teal
                     transition-all duration-200
                     cursor-pointer
@@ -84,7 +84,7 @@ export default function Navbar({ activeMenu }) {
                         className="
                             glass-strong
                             fixed
-                            top-21
+                            top-19
                             left-0
                             w-[260px]
                             max-h-[calc(100vh-65px)]
