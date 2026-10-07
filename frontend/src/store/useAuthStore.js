@@ -153,7 +153,7 @@ export const useAuthStore = create((set) => ({
           country: data.country,
         }),
       );
-      if (data.profilePic) formData.append("picture", data.profilePic);
+      if (data.profilePic) formData.append("profilePic", data.profilePic);
 
       const res = await axiosInstance.put(API_PATHS.PROFILE.ME, formData, {
         headers: { "Content-Type": "multipart/form-data" },
