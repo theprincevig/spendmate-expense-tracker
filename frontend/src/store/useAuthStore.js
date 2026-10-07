@@ -151,9 +151,13 @@ export const useAuthStore = create((set) => ({
           gender: data.gender,
           phone: data.phone,
           country: data.country,
+          // "" means "remove the picture"; a File or undefined means don't touch it here
+          ...(data.profilePic === "" && { profilePic: "" }),
         }),
       );
-      if (data.profilePic) formData.append("profilePic", data.profilePic);
+      if (data.profilePic instanceof File) {
+        formData.append("profilePic", data.profilePic);
+      }
 
       const res = await axiosInstance.put(API_PATHS.PROFILE.ME, formData, {
         headers: { "Content-Type": "multipart/form-data" },

@@ -43,7 +43,7 @@ export default function UpdateProfile() {
 
     useEffect(() => {
         return () => {
-            if (preview) {
+            if (preview && preview.startsWith("blob:")) {
                 URL.revokeObjectURL(preview);
             }
         };
@@ -89,7 +89,7 @@ export default function UpdateProfile() {
         try {
             let profilePicSend = undefined;
 
-            if (profilePicRemoved) {
+            if (profilePicRemoved === true) {
                 profilePicSend = "";
             } else if (profilePic) {
                 profilePicSend = profilePic;
@@ -108,7 +108,7 @@ export default function UpdateProfile() {
 
         } catch (error) {
             console.log(error);
-            toast.error(error.response?.data?.message || "Failed to update profile");
+            toast.error(error.error || "Failed to update profile");
         }
     };
 
@@ -177,7 +177,7 @@ export default function UpdateProfile() {
                                     <p className="text-base font-semibold text-(--text-primary)">
                                         {profileData.fullName || "Your name"}
                                     </p>
-                                    <p className="text-sm text-[var(--text-secondary)">
+                                    <p className="text-sm text-(--text-secondary)">
                                         Update your personal details
                                     </p>
                                 </div>
