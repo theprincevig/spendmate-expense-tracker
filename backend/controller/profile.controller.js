@@ -11,13 +11,32 @@ const currencyConfig = require("../config/currency.Config.js");
 const SAFE_FIELDS =
   "fullName email profilePic dob gender phone address currency";
 
+const getPublicId = (imageUrl) => {
+  const [, afterUpload] = imageUrl.split("/upload/");
+  if (!afterUpload) return null;
+
+  const segments = afterUpload.split("/");
+
+  // Drop everything up to and including the version segment (e.g. "v1712345678")
+  const versionIndex = segments.findIndex((s) => /^v\d+$/.test(s));
+  const idSegments =
+    versionIndex !== -1 ? segments.slice(versionIndex + 1) : segments;
+
+  // Remove file extension from the last segment and decode URL encoding
+  return decodeURIComponent(idSegments.join("/").replace(/\.[^/.]+$/, ""));
+};
+
 const deleteFromCloudinary = async (imageUrl) => {
   if (!imageUrl || !imageUrl.includes("res.cloudinary.com")) return;
 
   try {
-    const publicId = imageUrl.split("/").slice(-2).join("/").split(".")[0];
+    const publicId = getPublicId(imageUrl);
+    if (!publicId) return;
 
-    await cloudinary.uploader.destroy(publicId);
+    const result = await cloudinary.uploader.destroy(publicId);
+    if (result.result !== "ok") {
+      console.warn("Cloudinary delete didn't succeed: ", result);
+    }
   } catch (error) {
     console.warn("Cloudinary delete failed:", error.message);
   }
@@ -51,16 +70,15 @@ const applyProfileUpdates = async (user, profileData, req) => {
     }
   }
 
-  // Reset to default avatar
-  if (profilePic === "") {
-    await deleteFromCloudinary(user.profilePic);
-    user.profilePic = "";
-  }
-
   // New image uploaded
   if (req.file) {
     await deleteFromCloudinary(user.profilePic);
     user.profilePic = req.file.path;
+
+    // Reset to default avatar
+  } else if (profilePic === "") {
+    await deleteFromCloudinary(user.profilePic);
+    user.profilePic = "";
   }
 };
 
